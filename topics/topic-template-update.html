@@ -1,0 +1,52 @@
+<!-- This shows how to update topic pages to include math input functionality -->
+<!-- Add this after the <link> tags in the head section: -->
+<script src="../math-input.js"></script>
+
+<!-- Update the work area section to include math keyboard toggle: -->
+<div class="work-area">
+    <div class="work-area-container">
+        <h3>Your Working:</h3>
+        <button class="math-keyboard-toggle" onclick="mathInput.showKeyboard('workArea')">
+            Math Symbols ∑
+        </button>
+        <textarea 
+            id="workArea" 
+            class="work-input" 
+            placeholder="Show your working here..."
+            rows="4"
+            onchange="mathInput.saveWork()"
+            onkeyup="mathInput.saveWork()"
+        ></textarea>
+    </div>
+</div>
+
+<!-- Add the math keyboard container at the end of body: -->
+<div id="mathKeyboard" class="math-keyboard"></div>
+
+<!-- Update the script section to include: -->
+<script>
+    // Set topic ID for work saving
+    window.currentTopicId = 'topic-name-here'; // Replace with actual topic ID
+    
+    // Initialize math keyboard
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create and append math keyboard
+        const keyboard = mathInput.createMathKeyboard();
+        document.getElementById('mathKeyboard').innerHTML = keyboard.innerHTML;
+        
+        // Load any saved work when showing a problem
+        const originalShowProblem = window.showProblem;
+        window.showProblem = function() {
+            originalShowProblem.apply(this, arguments);
+            window.currentProblem = currentProblem;
+            mathInput.loadWork(window.currentTopicId, currentProblem);
+        };
+    });
+    
+    // Save work when answer is submitted
+    const originalCheckAnswer = window.checkAnswer;
+    window.checkAnswer = function() {
+        mathInput.saveWork();
+        originalCheckAnswer.apply(this, arguments);
+    };
+</script>

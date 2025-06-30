@@ -10,6 +10,9 @@ An interactive, mobile-first mathematics learning platform for Year 9 UK student
 - 🛍️ **Shop System** - Spend emeralds on power-ups, themes, and hints
 - 📊 **Progress Tracking** - Persistent progress saved locally
 - 🏆 **13 Topics** - Complete Year 9 UK maths curriculum (non-calculator)
+- ∑ **Math Symbol Keyboard** - Easy input of mathematical symbols on mobile
+- 👨‍🏫 **Teacher Dashboard** - Review student work and export reports
+- 💾 **Work History** - All student calculations saved for review
 
 ## Topics Covered
 
@@ -29,9 +32,39 @@ An interactive, mobile-first mathematics learning platform for Year 9 UK student
 
 ## Getting Started
 
+### For Students:
 1. Open `index.html` in a web browser
 2. Works best on mobile devices
 3. Progress is saved automatically
+4. Use the math symbol keyboard for easy input
+
+### For Teachers:
+1. Access `teacher-dashboard.html` to review student work
+2. Export reports as Markdown or JSON
+3. All student calculations are saved locally
+
+## How It Works
+
+### Currency System
+- **XP (Experience Points)**: Track overall progress and level up
+- **Emeralds**: Currency earned from correct answers (1-3 per problem)
+  - First attempt: 2-3 emeralds
+  - Later attempts: 1 emerald
+  - Can be spent in the shop on:
+    - Power-ups (Double XP potions)
+    - Themes (Dark mode, End theme)
+    - Hint packs
+
+### Progressive Unlocking
+Topics unlock progressively as students complete problems:
+- Complete 5 problems in any topic to unlock the next topic
+- This ensures students master fundamentals before advancing
+- All topics can eventually be unlocked through consistent practice
+
+### Work Saving
+- All student work is automatically saved to browser storage
+- Teachers can review complete work history
+- Export options for assessment and record-keeping
 
 ## Technologies
 
