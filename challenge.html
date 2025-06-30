@@ -246,6 +246,7 @@
             50% { background-color: rgba(0, 255, 0, 0.3); }
         }
     </style>
+    <script src="answer-utils.js"></script>
 </head>
 <body>
     <div class="challenge-container">
@@ -431,7 +432,9 @@
             const correctAnswer = problem.answer.toLowerCase();
             const alternates = problem.alternates?.map(a => a.toLowerCase()) || [];
             
-            let isCorrect = userAnswer === correctAnswer || alternates.includes(userAnswer);
+            let isCorrect = AnswerChecker.matches(userAnswer, correctAnswer, {
+                alternates: alternates
+            });
             
             const problemScreen = document.getElementById('problemScreen');
             

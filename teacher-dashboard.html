@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Teacher Dashboard - Minecraft Maths</title>
+    <title>Teacher Dashboard | Minecraft Maths</title>
     <link rel="stylesheet" href="styles.css">
     <script src="math-input.js"></script>
     <style>
@@ -13,248 +13,243 @@
             margin: 0 auto;
             padding: var(--spacing-lg);
         }
-        
+
         .dashboard-header {
-            background: var(--mc-stone);
+            background: var(--mc-dark);
             color: white;
             padding: var(--spacing-xl);
-            border-radius: 12px;
+            border-radius: 8px;
             margin-bottom: var(--spacing-xl);
             text-align: center;
         }
-        
-        .dashboard-stats {
+
+        .dashboard-header h1 {
+            font-size: clamp(24px, 5vw, 36px);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: var(--spacing-lg);
             margin-bottom: var(--spacing-xl);
         }
-        
+
         .stat-card {
             background: var(--bg-card);
-            padding: var(--spacing-lg);
-            border-radius: 12px;
             border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
             text-align: center;
         }
-        
+
         .stat-value {
-            font-size: 2.5em;
+            font-size: 36px;
             font-weight: bold;
             color: var(--mc-emerald);
             display: block;
-            margin: var(--spacing-sm) 0;
         }
-        
-        .work-history {
-            background: var(--bg-card);
-            padding: var(--spacing-lg);
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-        }
-        
-        .topic-work {
-            margin-bottom: var(--spacing-xl);
-            padding-bottom: var(--spacing-xl);
-            border-bottom: 2px solid var(--border-color);
-        }
-        
-        .topic-work:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
-        .problem-work {
-            background: var(--bg-secondary);
-            padding: var(--spacing-md);
-            border-radius: 8px;
-            margin-bottom: var(--spacing-md);
-        }
-        
-        .work-content {
-            background: var(--mc-dark);
-            color: var(--mc-light-gray);
-            padding: var(--spacing-md);
-            border-radius: 4px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            margin: var(--spacing-sm) 0;
-        }
-        
-        .timestamp {
+
+        .stat-label {
             color: var(--text-secondary);
-            font-size: 0.9em;
+            margin-top: var(--spacing-sm);
         }
-        
-        .export-buttons {
-            display: flex;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-            flex-wrap: wrap;
-        }
-        
-        .export-btn {
-            background: var(--mc-emerald);
-            color: white;
-            border: none;
-            padding: 12px 24px;
+
+        .work-preview {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .export-btn:hover {
-            background: var(--mc-dark-emerald);
-        }
-        
-        .back-home {
-            background: var(--mc-diamond);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            display: inline-block;
-            text-decoration: none;
+            padding: var(--spacing-lg);
             margin-bottom: var(--spacing-lg);
         }
-        
-        @media (max-width: 768px) {
-            .dashboard-stats {
-                grid-template-columns: 1fr;
-            }
+
+        .work-preview h2 {
+            color: var(--mc-gold);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .work-sample {
+            background: var(--mc-dark);
+            color: white;
+            padding: var(--spacing-md);
+            border-radius: 4px;
+            margin: var(--spacing-md) 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .export-btn {
+            background: var(--mc-gold);
+            color: var(--mc-dark);
+            border: none;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin: var(--spacing-xl) auto;
+            transition: all 0.2s;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .export-btn:active {
+            transform: translateY(0);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: var(--spacing-lg);
+            left: var(--spacing-lg);
+            background: var(--mc-stone);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-secondary);
+        }
+
+        .topic-work {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .topic-work h3 {
+            color: var(--mc-diamond);
+            margin-bottom: var(--spacing-md);
         }
     </style>
 </head>
 <body>
+    <button class="back-btn" onclick="window.location.href='index.html'">
+        ← Back
+    </button>
+
     <div class="dashboard-container">
-        <a href="index.html" class="back-home">← Back to Home</a>
-        
         <div class="dashboard-header">
-            <h1>📊 Teacher Dashboard</h1>
+            <h1>📚 Teacher Dashboard</h1>
             <p>Review student work and progress</p>
         </div>
-        
-        <div class="dashboard-stats" id="statsContainer">
-            <!-- Stats will be populated here -->
+
+        <div class="stats-grid" id="statsGrid">
+            <!-- Stats will be inserted here -->
         </div>
-        
-        <div class="export-buttons">
-            <button class="export-btn" onclick="exportReport()">
-                📄 Download Full Report
-            </button>
-            <button class="export-btn" onclick="exportJSON()">
-                💾 Export Raw Data (JSON)
-            </button>
-            <button class="export-btn" onclick="clearSelectedWork()">
-                🗑️ Clear Work History
-            </button>
-        </div>
-        
-        <div class="work-history" id="workHistory">
-            <h2>Student Work History</h2>
-            <div id="workContent">
-                <!-- Work history will be populated here -->
+
+        <div class="work-preview" id="workPreview">
+            <h2>Recent Student Work</h2>
+            <div id="workSamples">
+                <!-- Work samples will be inserted here -->
             </div>
         </div>
+
+        <button class="export-btn" onclick="exportWork()">
+            📥 Download Full Report
+        </button>
     </div>
-    
+
     <script>
         // Load and display student data
         function loadDashboard() {
             const data = mathInput.exportWorkHistory();
+            const progress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
             
             // Display stats
-            const statsHTML = `
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
                 <div class="stat-card">
-                    <h3>Total XP</h3>
-                    <span class="stat-value">${data.progress.xp || 0}</span>
+                    <span class="stat-value">${progress.xp || 0}</span>
+                    <div class="stat-label">Total XP</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Emeralds</h3>
-                    <span class="stat-value">💚 ${data.progress.emeralds || 0}</span>
+                    <span class="stat-value">${progress.emeralds || 0}💚</span>
+                    <div class="stat-label">Emeralds Earned</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Problems Attempted</h3>
                     <span class="stat-value">${data.totalProblemsAttempted}</span>
+                    <div class="stat-label">Problems Attempted</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Topics Started</h3>
                     <span class="stat-value">${Object.keys(data.studentWork).length}</span>
+                    <div class="stat-label">Topics Started</div>
                 </div>
             `;
-            document.getElementById('statsContainer').innerHTML = statsHTML;
             
-            // Display work history
-            let workHTML = '';
+            // Display work samples
+            const workSamples = document.getElementById('workSamples');
             
             if (Object.keys(data.studentWork).length === 0) {
-                workHTML = '<p>No work history found yet. Students need to attempt problems first.</p>';
-            } else {
-                for (const [topicId, problems] of Object.entries(data.studentWork)) {
-                    workHTML += `<div class="topic-work">`;
-                    workHTML += `<h3>📚 Topic: ${formatTopicName(topicId)}</h3>`;
-                    
-                    for (const [problemId, work] of Object.entries(problems)) {
-                        const date = new Date(work.timestamp);
-                        workHTML += `
-                            <div class="problem-work">
-                                <h4>Problem ${parseInt(problemId) + 1}</h4>
-                                <p class="timestamp">📅 ${date.toLocaleString()}</p>
-                                <div class="work-content">${work.work || 'No work shown'}</div>
-                                <p><strong>Answer Given:</strong> ${work.answer || 'No answer'}</p>
-                            </div>
-                        `;
-                    }
-                    workHTML += `</div>`;
-                }
+                workSamples.innerHTML = `
+                    <div class="empty-state">
+                        <p>No student work recorded yet.</p>
+                        <p>Work will appear here as problems are attempted.</p>
+                    </div>
+                `;
+                return;
             }
             
-            document.getElementById('workContent').innerHTML = workHTML;
-        }
-        
-        // Format topic names
-        function formatTopicName(topicId) {
-            return topicId.split('-').map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1)
-            ).join(' ');
-        }
-        
-        // Export functions
-        function exportReport() {
-            mathInput.downloadReport();
-        }
-        
-        function exportJSON() {
-            const data = mathInput.exportWorkHistory();
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `student-data-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        
-        function clearSelectedWork() {
-            if (confirm('Are you sure you want to clear all work history? This cannot be undone.')) {
-                localStorage.removeItem('mathWorkHistory');
-                loadDashboard();
-                alert('Work history cleared.');
+            let samplesHTML = '';
+            for (const [topicId, problems] of Object.entries(data.studentWork)) {
+                const topicTitle = topicId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                samplesHTML += `<div class="topic-work"><h3>📘 ${topicTitle}</h3>`;
+                
+                // Show last 2 problems from each topic
+                const problemEntries = Object.entries(problems).slice(-2);
+                
+                for (const [problemId, work] of problemEntries) {
+                    const date = new Date(work.timestamp).toLocaleString();
+                    samplesHTML += `
+                        <div class="work-sample">
+Problem ${parseInt(problemId) + 1} - ${date}
+Work shown:
+${work.work || 'No work shown'}
+
+Answer given: ${work.answer || 'No answer'}
+                        </div>
+                    `;
+                }
+                samplesHTML += '</div>';
             }
+            
+            workSamples.innerHTML = samplesHTML || '<p>No work samples available.</p>';
+        }
+        
+        function exportWork() {
+            mathInput.downloadReport();
+            
+            // Show feedback
+            const btn = document.querySelector('.export-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Report Downloaded!';
+            btn.style.background = 'var(--mc-emerald)';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = 'var(--mc-gold)';
+            }, 2000);
         }
         
         // Load dashboard on page load
-        document.addEventListener('DOMContentLoaded', loadDashboard);
+        loadDashboard();
         
-        // Auto-refresh every 30 seconds
-        setInterval(loadDashboard, 30000);
+        // Refresh every 5 seconds if page is visible
+        setInterval(() => {
+            if (!document.hidden) {
+                loadDashboard();
+            }
+        }, 5000);
     </script>
 </body>
 </html>

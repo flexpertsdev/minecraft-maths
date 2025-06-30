@@ -7,6 +7,8 @@
     <title>Two-Way Tables - Inventory Management | Minecraft Maths</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="topic-styles.css">
+    <script src="../answer-utils.js"></script>
+    <script src="../math-input.js"></script>
 </head>
 <body>
     <div class="topic-container">
@@ -69,7 +71,12 @@
                 </div>
                 
                 <div class="work-area">
-                    <h3>Your Calculations:</h3>
+                    <div class="work-area-header">
+                        <h3>Your Calculations:</h3>
+                        <button class="math-keyboard-toggle" onclick="mathInput.showKeyboard('workArea')">
+                            🔢 Math Symbols
+                        </button>
+                    </div>
                     <textarea 
                         id="workArea" 
                         class="work-input" 
@@ -85,7 +92,7 @@
                         id="answerInput" 
                         class="answer-input" 
                         placeholder="Enter your answer"
-                        inputmode="numeric"
+                        
                     >
                 </div>
                 
@@ -142,6 +149,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Math Keyboard -->
+    <div id="mathKeyboard" class="math-keyboard"></div>
 
     <script>
         // Two-way table problems with inventory context
@@ -298,6 +308,9 @@
             }
         ];
 
+        // Set topic ID for work saving
+        window.currentTopicId = 'two-way-tables';
+        
         // Game state
         let currentProblem = 0;
         let score = 0;
@@ -313,6 +326,7 @@
 
         function showProblem() {
             const problem = problems[currentProblem];
+            window.currentProblem = currentProblem;
             document.querySelector('.problem-number').textContent = `Chest ${currentProblem + 1}/10`;
             document.getElementById('problemContent').innerHTML = `
                 <div class="problem-question">${problem.question}</div>
@@ -344,6 +358,14 @@
             document.getElementById('hintBox').style.display = 'none';
             document.getElementById('feedbackBox').style.display = 'none';
             document.querySelector('.hint-btn').disabled = false;
+            
+            
+            // Save work area content on change
+            document.getElementById('workArea').addEventListener('input', () => mathInput.saveWork());
+            document.getElementById('answerInput').addEventListener('input', () => mathInput.saveWork());
+            
+            // Load any saved work
+            mathInput.loadWork('two-way-tables', currentProblem);
             
             updateProgress();
         }
@@ -472,6 +494,12 @@
                 checkAnswer();
             }
         });
+        
+        // Initialize math keyboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const keyboard = mathInput.createMathKeyboard();
+            document.getElementById('mathKeyboard').appendChild(keyboard);
+        });
     </script>
 
     <style>
@@ -523,6 +551,45 @@
         .inventory-table td:last-child,
         .inventory-table th:last-child {
             border-left: 2px solid var(--mc-stone);
+        }
+    </style>
+
+    <style>
+        .work-area-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .work-area-header h3 {
+            margin: 0;
+        }
+        
+        .math-keyboard-toggle {
+            background: var(--mc-emerald);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .math-keyboard-toggle:active {
+            transform: scale(0.95);
+            background: var(--mc-dark-emerald);
+        }
+        
+        @media (max-width: 480px) {
+            .math-keyboard-toggle {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
         }
     </style>
 </body>
