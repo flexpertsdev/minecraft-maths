@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Word Problems - Village Trading | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Word Problems</h1>
+                <p class="topic-subtitle">Village Trading</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/12</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">💰</div>
+                <h2>Welcome to the Trading Post!</h2>
+                <p>In Minecraft villages, you'll need to solve real-world problems to get the best deals. Master the art of translating words into equations!</p>
+                
+                <div class="example-box">
+                    <h3>🎯 Trading Example:</h3>
+                    <p><strong>Problem:</strong> A villager sells 3 emeralds for 12 iron ingots. How many iron ingots for 5 emeralds?</p>
+                    <p><strong>Solution:</strong> Set up a proportion: 3 emeralds = 12 iron, so 1 emerald = 4 iron, therefore 5 emeralds = 20 iron!</p>
+                </div>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Trading Skills:</h3>
+                    <ul>
+                        <li>Identify what you're solving for (the unknown)</li>
+                        <li>Translate words into mathematical operations</li>
+                        <li>Set up equations systematically</li>
+                        <li>Check your answer makes sense in context</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Trading Quest
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Trade 1/12</span>
+                    <span class="problem-xp">+15 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Calculations:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Set up your equation here..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Your Answer:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter your answer"
+                        inputmode="numeric"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Hint (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Check Trade
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Modal -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">✅</div>
+                <h2>Trade Successful!</h2>
+                <p id="successMessage">Excellent negotiation!</p>
+                <div class="xp-earned">+15 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Trade →
+                </button>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Master Trader!</h2>
+                <p>You've become a village trading expert!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">180</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="accuracy">100%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">💎10</span>
+                        <span class="stat-label">Gems Earned</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Problem data with Minecraft village trading context
+        const problems = [
+            {
+                id: 1,
+                context: "🏘️ Village Market",
+                question: "A farmer villager trades 8 wheat for 2 emeralds. How many emeralds would you get for 20 wheat?",
+                hint: "Find the rate: 8 wheat = 2 emeralds, so 4 wheat = 1 emerald",
+                answer: 5,
+                solution: "8 wheat = 2 emeralds, so 20 wheat = (20 ÷ 8) × 2 = 5 emeralds"
+            },
+            {
+                id: 2,
+                context: "⚒️ Blacksmith's Shop",
+                question: "Steve has 45 iron ingots. He uses 24 to make armor and trades the rest for emeralds at a rate of 3 iron per emerald. How many emeralds does he get?",
+                hint: "First find how much iron is left after making armor",
+                answer: 7,
+                solution: "Iron left: 45 - 24 = 21. Emeralds: 21 ÷ 3 = 7"
+            },
+            {
+                id: 3,
+                context: "🧪 Brewing Stand",
+                question: "A cleric buys glass bottles in packs of 6 for 3 emeralds. If you need 42 bottles, how many emeralds will it cost?",
+                hint: "How many packs of 6 are in 42?",
+                answer: 21,
+                solution: "Packs needed: 42 ÷ 6 = 7. Cost: 7 × 3 = 21 emeralds"
+            },
+            {
+                id: 4,
+                context: "📚 Librarian's Study",
+                question: "A librarian increases all book prices by 25%. If an enchanted book now costs 15 emeralds, what was the original price?",
+                hint: "If price increased by 25%, new price is 125% of original",
+                answer: 12,
+                solution: "1.25 × original = 15, so original = 15 ÷ 1.25 = 12 emeralds"
+            },
+            {
+                id: 5,
+                context: "🌾 Harvest Time",
+                question: "Three farmers harvest wheat together. Alex collects twice as much as Ben, and Charlie collects 10 more than Ben. Together they harvest 130 wheat. How much did Ben collect?",
+                hint: "Let Ben's amount = x. Express others in terms of x",
+                answer: 30,
+                solution: "Let Ben = x, Alex = 2x, Charlie = x + 10. Total: x + 2x + (x + 10) = 130. So 4x + 10 = 130, x = 30"
+            },
+            {
+                id: 6,
+                context: "🏹 Fletcher's Workshop",
+                question: "A fletcher sells arrows in bundles. 5 bundles contain 160 arrows total. How many arrows are in 8 bundles?",
+                hint: "First find how many arrows in 1 bundle",
+                answer: 256,
+                solution: "1 bundle = 160 ÷ 5 = 32 arrows. 8 bundles = 8 × 32 = 256 arrows"
+            },
+            {
+                id: 7,
+                context: "🐑 Shepherd's Trade",
+                question: "White wool sells for 2 emeralds per block, colored wool for 3 emeralds. If you sell 15 white and 8 colored blocks, how many emeralds do you earn?",
+                hint: "Calculate earnings from each type separately",
+                answer: 54,
+                solution: "White: 15 × 2 = 30 emeralds. Colored: 8 × 3 = 24 emeralds. Total: 30 + 24 = 54"
+            },
+            {
+                id: 8,
+                context: "⛏️ Mining Expedition",
+                question: "In a mine, you find 3 diamonds for every 20 iron ore. If you mine 140 iron ore, how many diamonds would you expect to find?",
+                hint: "Set up a proportion: 3 diamonds per 20 iron",
+                answer: 21,
+                solution: "3 diamonds / 20 iron = x diamonds / 140 iron. x = (3 × 140) ÷ 20 = 21 diamonds"
+            },
+            {
+                id: 9,
+                context: "🎣 Fisherman's Catch",
+                question: "A fisherman trades 4 raw fish for 1 emerald. After a day of fishing, he has 7 emeralds worth of fish plus 6 extra fish. How many fish did he catch?",
+                hint: "7 emeralds worth = how many fish? Then add the extra",
+                answer: 34,
+                solution: "7 emeralds = 7 × 4 = 28 fish. Total: 28 + 6 = 34 fish"
+            },
+            {
+                id: 10,
+                context: "🥕 Farmer's Problem",
+                question: "A carrot farm produces 45 carrots per row. After planting 8 rows and eating 12 carrots, how many remain?",
+                hint: "Calculate total produced, then subtract what was eaten",
+                answer: 348,
+                solution: "Total carrots: 8 × 45 = 360. Remaining: 360 - 12 = 348"
+            },
+            {
+                id: 11,
+                context: "💎 Treasure Division",
+                question: "Three players find treasure: 84 gold ingots to share. Alex gets twice as much as Ben, and Charlie gets 12 ingots. How many does Ben get?",
+                hint: "Charlie's share is fixed. Divide the rest between Alex and Ben",
+                answer: 24,
+                solution: "After Charlie: 84 - 12 = 72 left. If Ben gets x, Alex gets 2x. So x + 2x = 72, giving x = 24"
+            },
+            {
+                id: 12,
+                context: "🏪 Grand Market",
+                question: "At the grand market, emerald prices change. Monday: 1 diamond = 8 emeralds. Tuesday: 1 diamond = 10 emeralds. If you trade 5 diamonds on Tuesday instead of Monday, how many extra emeralds do you get?",
+                hint: "Calculate earnings for each day, then find the difference",
+                answer: 10,
+                solution: "Monday: 5 × 8 = 40 emeralds. Tuesday: 5 × 10 = 50 emeralds. Extra: 50 - 40 = 10"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let hintsUsed = 0;
+        let startTime = Date.now();
+        let attempts = {};
+
+        // Initialize
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            
+            // Update problem number
+            document.querySelector('.problem-number').textContent = `Trade ${currentProblem + 1}/12`;
+            
+            // Update problem content
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-context">${problem.context}</div>
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            // Update progress
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Trading Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+            
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            const problem = problems[currentProblem];
+            const problemId = problem.id;
+            
+            if (!userAnswer) {
+                showFeedback('Please enter an answer!', false);
+                return;
+            }
+            
+            if (!attempts[problemId]) {
+                attempts[problemId] = 0;
+            }
+            attempts[problemId]++;
+            
+            const isCorrect = parseFloat(userAnswer) === problem.answer;
+            
+            if (isCorrect) {
+                let xp = 15;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 3, 5);
+                
+                score += xp;
+                
+                document.getElementById('successMessage').textContent = 
+                    attempts[problemId] === 1 ? 'Perfect trade!' : 'Good negotiation!';
+                document.querySelector('.xp-earned').textContent = `+${xp} XP`;
+                document.getElementById('successModal').classList.add('show');
+                
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+                
+                saveProgress();
+            } else {
+                showFeedback(`Not quite right. ${attempts[problemId] > 2 ? `The answer is ${problem.answer}` : 'Try again!'}`, false);
+                
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+            
+            if ('vibrate' in navigator && !isSuccess) {
+                navigator.vibrate(200);
+            }
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            const totalAttempts = Object.values(attempts).reduce((a, b) => a + b, 0);
+            const accuracy = Math.round((problems.length / totalAttempts) * 100);
+            
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            
+            document.getElementById('completionModal').classList.add('show');
+            
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/12`;
+        }
+
+        function saveProgress() {
+            const progress = {
+                topicId: 'word-problems',
+                completed: currentProblem,
+                score: score,
+                hintsUsed: hintsUsed,
+                timestamp: Date.now()
+            };
+            
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'word-problems');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'word-problems', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 15;
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            
+            if (!allProgress.topics) allProgress.topics = [];
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'word-problems');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 50;
+            allProgress.gems = (allProgress.gems || 0) + 10;
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                nextProblem();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

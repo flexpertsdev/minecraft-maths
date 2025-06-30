@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Number Puzzles - Dungeon Riddles | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Number Puzzles</h1>
+                <p class="topic-subtitle">Dungeon Riddles</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/10</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">🗝️</div>
+                <h2>Enter the Ancient Dungeon!</h2>
+                <p>Deep in Minecraft dungeons, mysterious riddles guard the treasure. Solve "I'm thinking of a number" puzzles to unlock ancient doors!</p>
+                
+                <div class="example-box">
+                    <h3>🎯 Dungeon Riddle:</h3>
+                    <p><strong>"I think of a number, double it, add 6. The result is 20."</strong></p>
+                    <p><strong>Solution:</strong> Work backwards!</p>
+                    <p>20 - 6 = 14, then 14 ÷ 2 = 7. The number is 7!</p>
+                </div>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Riddle-Solving Tips:</h3>
+                    <ul>
+                        <li>Work backwards from the result</li>
+                        <li>Use inverse operations</li>
+                        <li>Let x = the mystery number</li>
+                        <li>Check your answer works forward</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Enter the Dungeon
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Riddle 1/10</span>
+                    <span class="problem-xp">+10 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Solution:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Work backwards or set up an equation..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">The Mystery Number:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter the number"
+                        inputmode="numeric"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Ancient Hint (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        🗝️ Try Key
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Modal -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">🎉</div>
+                <h2>Door Unlocked!</h2>
+                <p id="successMessage">The ancient mechanism clicks open!</p>
+                <div class="xp-earned">+10 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Chamber →
+                </button>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">💎</div>
+                <h2>Dungeon Conquered!</h2>
+                <p>You've solved all the ancient riddles!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">100</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">🗝️10</span>
+                        <span class="stat-label">Doors Opened</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Problem data with dungeon riddle context
+        const problems = [
+            {
+                id: 1,
+                context: "🏛️ First Chamber",
+                question: "I think of a number, add 5, and get 13. What's my number?",
+                hint: "If adding 5 gives 13, work backwards: 13 - 5",
+                answer: 8,
+                solution: "x + 5 = 13, so x = 13 - 5 = 8"
+            },
+            {
+                id: 2,
+                context: "🏛️ Hall of Mirrors",
+                question: "I think of a number, multiply by 3, and get 27. What's my number?",
+                hint: "If multiplying by 3 gives 27, divide 27 by 3",
+                answer: 9,
+                solution: "3x = 27, so x = 27 ÷ 3 = 9"
+            },
+            {
+                id: 3,
+                context: "🏛️ Crystal Cave",
+                question: "I think of a number, double it, then add 7. The result is 23. What's my number?",
+                hint: "Work backwards: 23 - 7 = ?, then divide by 2",
+                answer: 8,
+                solution: "2x + 7 = 23, so 2x = 16, therefore x = 8"
+            },
+            {
+                id: 4,
+                context: "🏛️ Lava Chamber",
+                question: "I think of a number, subtract 4, then multiply by 2. The result is 10. What's my number?",
+                hint: "Reverse the operations: 10 ÷ 2 = ?, then add 4",
+                answer: 9,
+                solution: "(x - 4) × 2 = 10, so x - 4 = 5, therefore x = 9"
+            },
+            {
+                id: 5,
+                context: "🏛️ Guardian Room",
+                question: "I think of a number, multiply by 4, subtract 5, and get 19. What's my number?",
+                hint: "Add 5 to 19, then divide by 4",
+                answer: 6,
+                solution: "4x - 5 = 19, so 4x = 24, therefore x = 6"
+            },
+            {
+                id: 6,
+                context: "🏛️ Enchanted Library",
+                question: "I think of a number. When I triple it and add 9, I get the same as doubling it and adding 15. What's my number?",
+                hint: "Set up equation: 3x + 9 = 2x + 15",
+                answer: 6,
+                solution: "3x + 9 = 2x + 15, so x = 6"
+            },
+            {
+                id: 7,
+                context: "🏛️ Spider's Den",
+                question: "I think of a number, add 3, then double the result. I get 26. What's my number?",
+                hint: "26 ÷ 2 = 13, then subtract 3",
+                answer: 10,
+                solution: "2(x + 3) = 26, so x + 3 = 13, therefore x = 10"
+            },
+            {
+                id: 8,
+                context: "🏛️ Treasure Vault",
+                question: "I think of a number. Half of it plus 7 equals 15. What's my number?",
+                hint: "If half plus 7 is 15, then half is 8",
+                answer: 16,
+                solution: "x/2 + 7 = 15, so x/2 = 8, therefore x = 16"
+            },
+            {
+                id: 9,
+                context: "🏛️ Final Gate",
+                question: "I think of a number. If I subtract it from 50, I get three times the number. What is it?",
+                hint: "Set up: 50 - x = 3x",
+                answer: 12.5,
+                solution: "50 - x = 3x, so 50 = 4x, therefore x = 12.5"
+            },
+            {
+                id: 10,
+                context: "🏛️ Dragon's Lair",
+                question: "I think of a number. When I multiply by 5 and subtract 8, I get twice the number plus 7. What's my number?",
+                hint: "Set up: 5x - 8 = 2x + 7",
+                answer: 5,
+                solution: "5x - 8 = 2x + 7, so 3x = 15, therefore x = 5"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        // Initialize
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            
+            document.querySelector('.problem-number').textContent = `Riddle ${currentProblem + 1}/10`;
+            
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-context">${problem.context}</div>
+                <div class="problem-question" style="font-style: italic; font-size: 18px;">"${problem.question}"</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Ancient Wisdom:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+            
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            const problem = problems[currentProblem];
+            const problemId = problem.id;
+            
+            if (!userAnswer) {
+                showFeedback('Enter a number to try the key!', false);
+                return;
+            }
+            
+            if (!attempts[problemId]) {
+                attempts[problemId] = 0;
+            }
+            attempts[problemId]++;
+            
+            const isCorrect = parseFloat(userAnswer) === problem.answer;
+            
+            if (isCorrect) {
+                let xp = 10;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 2, 3);
+                
+                score += xp;
+                
+                // Award emeralds
+                let emeraldReward = attempts[problemId] === 1 ? 3 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.getElementById('successMessage').textContent = 
+                    attempts[problemId] === 1 ? 'Perfect! The door swings open!' : 'Success! The lock clicks!';
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+                
+                saveProgress();
+            } else {
+                showFeedback(`Wrong key! ${attempts[problemId] > 2 ? `The answer is ${problem.answer}` : 'Try again!'}`, false);
+                
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+            
+            if ('vibrate' in navigator && !isSuccess) {
+                navigator.vibrate(200);
+            }
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/10`;
+        }
+
+        function saveProgress() {
+            const progress = {
+                topicId: 'thinking-number',
+                completed: currentProblem,
+                score: score,
+                hintsUsed: hintsUsed,
+                timestamp: Date.now()
+            };
+            
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'thinking-number');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'thinking-number', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 10;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            
+            if (!allProgress.topics) allProgress.topics = [];
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'thinking-number');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            // Bonus emeralds for completing dungeon
+            allProgress.xp = (allProgress.xp || 0) + 50;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 10;
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                nextProblem();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

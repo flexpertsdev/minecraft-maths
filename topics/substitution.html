@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Substitution - Crafting Recipes | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Substitution</h1>
+                <p class="topic-subtitle">Crafting Recipes</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/15</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">⚒️</div>
+                <h2>Welcome to the Crafting Workshop!</h2>
+                <p>In Minecraft, crafting recipes use specific amounts of materials. Substitution in maths works the same way - we replace variables with actual numbers!</p>
+                
+                <div class="example-box">
+                    <h3>🎯 Example:</h3>
+                    <p>If <strong>wood = 4</strong> and <strong>stone = 3</strong></p>
+                    <p>Then <strong>2×wood + stone = 2×4 + 3 = 11</strong></p>
+                </div>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Concepts:</h3>
+                    <ul>
+                        <li>Replace each variable with its given value</li>
+                        <li>Follow BIDMAS order (Brackets, Indices, Division/Multiplication, Addition/Subtraction)</li>
+                        <li>Be careful with negative numbers</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Crafting Quest
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Problem 1/15</span>
+                    <span class="problem-xp">+10 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Workbench:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your working here..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Your Answer:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter your answer"
+                        inputmode="numeric"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Hint (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Check Answer
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Modal -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">✅</div>
+                <h2>Correct!</h2>
+                <p id="successMessage">Great work!</p>
+                <div class="xp-earned">+10 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Continue →
+                </button>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Quest Complete!</h2>
+                <p>You've mastered Substitution!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">150</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="accuracy">100%</span>
+                        <span class="stat-label">Accuracy</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timeSpent">5:23</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Problem data with Minecraft context
+        const problems = [
+            {
+                id: 1,
+                context: "Steve is crafting tools. Let w = wood planks and s = sticks.",
+                question: "If w = 3 and s = 2, find the value of: 2w + s",
+                hint: "Replace w with 3 and s with 2. Then calculate: 2×3 + 2",
+                answer: 8,
+                solution: "2w + s = 2×3 + 2 = 6 + 2 = 8"
+            },
+            {
+                id: 2,
+                context: "In the mine, let i = iron ore and c = coal.",
+                question: "If i = 5 and c = -2, find: i² + c",
+                hint: "Remember: i² means i × i. Be careful with the negative number!",
+                answer: 23,
+                solution: "i² + c = 5² + (-2) = 25 + (-2) = 23"
+            },
+            {
+                id: 3,
+                context: "For potion brewing, let g = glowstone and r = redstone.",
+                question: "If g = 4 and r = 3, find: 3(g + r)",
+                hint: "First add what's in the brackets, then multiply by 3",
+                answer: 21,
+                solution: "3(g + r) = 3(4 + 3) = 3 × 7 = 21"
+            },
+            {
+                id: 4,
+                context: "Building a house where b = blocks and d = doors.",
+                question: "If b = 12 and d = 2, find: b ÷ 4 + d",
+                hint: "Division comes before addition (BIDMAS). Calculate b ÷ 4 first.",
+                answer: 5,
+                solution: "b ÷ 4 + d = 12 ÷ 4 + 2 = 3 + 2 = 5"
+            },
+            {
+                id: 5,
+                context: "Enchanting table needs l = lapis and e = experience levels.",
+                question: "If l = -3 and e = 7, find: 2e - 3l",
+                hint: "Be careful: subtracting a negative is the same as adding!",
+                answer: 23,
+                solution: "2e - 3l = 2×7 - 3×(-3) = 14 - (-9) = 14 + 9 = 23"
+            },
+            {
+                id: 6,
+                context: "Farm production where w = wheat and p = potatoes.",
+                question: "If w = 2.5 and p = 1.5, find: 4w + 2p",
+                hint: "Multiply each variable by its coefficient, then add the results",
+                answer: 13,
+                solution: "4w + 2p = 4×2.5 + 2×1.5 = 10 + 3 = 13"
+            },
+            {
+                id: 7,
+                context: "Nether portal requires o = obsidian blocks.",
+                question: "If o = 6, find: o² - 2o + 1",
+                hint: "Calculate o² first, then 2o, then combine with addition/subtraction",
+                answer: 25,
+                solution: "o² - 2o + 1 = 6² - 2×6 + 1 = 36 - 12 + 1 = 25"
+            },
+            {
+                id: 8,
+                context: "Trading with villagers where e = emeralds and b = books.",
+                question: "If e = 8 and b = 3, find: (e - b) × 2",
+                hint: "Work out the brackets first, then multiply the result by 2",
+                answer: 10,
+                solution: "(e - b) × 2 = (8 - 3) × 2 = 5 × 2 = 10"
+            },
+            {
+                id: 9,
+                context: "Mob spawner rates where z = zombies and s = skeletons.",
+                question: "If z = -4 and s = -2, find: z × s",
+                hint: "Remember: negative × negative = positive",
+                answer: 8,
+                solution: "z × s = (-4) × (-2) = 8"
+            },
+            {
+                id: 10,
+                context: "Armor crafting where d = diamonds and g = gold.",
+                question: "If d = 5 and g = 3, find: 2d² - g²",
+                hint: "Calculate each squared term separately, then perform the subtraction",
+                answer: 41,
+                solution: "2d² - g² = 2×5² - 3² = 2×25 - 9 = 50 - 9 = 41"
+            },
+            {
+                id: 11,
+                context: "Redstone circuit with r = repeaters and t = redstone torches.",
+                question: "If r = 1/2 and t = 1/4, find: 8r + 4t",
+                hint: "When multiplying fractions: 8 × 1/2 = 8/2 = 4",
+                answer: 5,
+                solution: "8r + 4t = 8×(1/2) + 4×(1/4) = 4 + 1 = 5"
+            },
+            {
+                id: 12,
+                context: "Brewing stand with b = blaze powder and n = nether wart.",
+                question: "If b = 7 and n = -1, find: b² + 2bn + n²",
+                hint: "This is (b + n)². Try expanding it step by step.",
+                answer: 36,
+                solution: "b² + 2bn + n² = 7² + 2×7×(-1) + (-1)² = 49 - 14 + 1 = 36"
+            },
+            {
+                id: 13,
+                context: "Experience calculation where x = current XP and m = multiplier.",
+                question: "If x = 15 and m = 1.5, find: mx + 10",
+                hint: "Multiply first, then add 10",
+                answer: 32.5,
+                solution: "mx + 10 = 1.5×15 + 10 = 22.5 + 10 = 32.5"
+            },
+            {
+                id: 14,
+                context: "Elytra flight where h = height and v = velocity.",
+                question: "If h = 64 and v = 8, find: h ÷ v - 3",
+                hint: "Division before subtraction (BIDMAS)",
+                answer: 5,
+                solution: "h ÷ v - 3 = 64 ÷ 8 - 3 = 8 - 3 = 5"
+            },
+            {
+                id: 15,
+                context: "Final boss battle where d = damage and h = health.",
+                question: "If d = -5 and h = 20, find: h + 3d - d²",
+                hint: "Remember d² = (-5)² = 25 (positive!)",
+                answer: -20,
+                solution: "h + 3d - d² = 20 + 3×(-5) - (-5)² = 20 - 15 - 25 = -20"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let hintsUsed = 0;
+        let startTime = Date.now();
+        let problemStartTime = Date.now();
+        let attempts = {};
+
+        // Initialize
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            problemStartTime = Date.now();
+            
+            // Update problem number
+            document.querySelector('.problem-number').textContent = `Problem ${currentProblem + 1}/15`;
+            
+            // Update problem content
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-context">${problem.context}</div>
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            // Focus on work area
+            if (window.innerWidth > 768) {
+                document.getElementById('workArea').focus();
+            }
+            
+            // Update progress
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Hint:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+            
+            // Vibrate on mobile
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            const problem = problems[currentProblem];
+            const problemId = problem.id;
+            
+            if (!userAnswer) {
+                showFeedback('Please enter an answer!', false);
+                return;
+            }
+            
+            // Initialize attempts for this problem
+            if (!attempts[problemId]) {
+                attempts[problemId] = 0;
+            }
+            attempts[problemId]++;
+            
+            const isCorrect = parseFloat(userAnswer) === problem.answer;
+            
+            if (isCorrect) {
+                // Calculate XP (reduced for hints and multiple attempts)
+                let xp = 10;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 2, 3);
+                
+                score += xp;
+                
+                // Award emeralds (1 per correct answer, bonus for first try)
+                let emeraldReward = attempts[problemId] === 1 ? 2 : 1;
+                awardEmeralds(emeraldReward);
+                
+                // Show success modal
+                document.getElementById('successMessage').textContent = 
+                    attempts[problemId] === 1 ? 'Perfect! First try!' : 'Well done!';
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                
+                // Vibrate success pattern
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+                
+                // Save progress
+                saveProgress();
+            } else {
+                showFeedback(`Not quite right. ${attempts[problemId] > 2 ? `The answer is ${problem.answer}` : 'Try again!'}`, false);
+                
+                // Show solution after 3 attempts
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+            
+            if ('vibrate' in navigator && !isSuccess) {
+                navigator.vibrate(200);
+            }
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            const totalTime = Date.now() - startTime;
+            const minutes = Math.floor(totalTime / 60000);
+            const seconds = Math.floor((totalTime % 60000) / 1000);
+            
+            const totalAttempts = Object.values(attempts).reduce((a, b) => a + b, 0);
+            const accuracy = Math.round((problems.length / totalAttempts) * 100);
+            
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            document.getElementById('timeSpent').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('completionModal').classList.add('show');
+            
+            // Update main progress
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/15`;
+        }
+
+        function saveProgress() {
+            const progress = {
+                topicId: 'substitution',
+                completed: currentProblem,
+                score: score,
+                hintsUsed: hintsUsed,
+                timestamp: Date.now()
+            };
+            
+            // Save to localStorage
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'substitution');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'substitution', completed: currentProblem });
+            }
+            
+            // Update XP
+            allProgress.xp = (allProgress.xp || 0) + 10;
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            
+            // Mark topic as complete
+            if (!allProgress.topics) allProgress.topics = [];
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'substitution');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            // Award completion bonus
+            allProgress.xp = (allProgress.xp || 0) + 50;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 5;
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Modal close handlers
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                nextProblem();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+
+        // Award emeralds function
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+    </script>
+</body>
+</html>

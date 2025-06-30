@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Enlargement - Map Scaling | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Enlargement</h1>
+                <p class="topic-subtitle">Map Scaling</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/12</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">🗺️</div>
+                <h2>Welcome to the Cartographer's Workshop!</h2>
+                <p>Master the art of scaling builds and maps! Learn to enlarge structures precisely for mega builds.</p>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Concepts:</h3>
+                    <ul>
+                        <li>Scale factor multiplication</li>
+                        <li>Center of enlargement</li>
+                        <li>Coordinate transformations</li>
+                        <li>Area scales by factor²</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Mapping
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Map 1/12</span>
+                    <span class="problem-xp">+16 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Calculations:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your scaling calculations..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Your Answer:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter coordinates or dimensions"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Map Tip (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Check Scale
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">✅</div>
+                <h2>Perfect Scaling!</h2>
+                <p id="successMessage">Your map is accurate!</p>
+                <div class="xp-earned">+16 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Map →
+                </button>
+            </div>
+        </div>
+
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Master Cartographer!</h2>
+                <p>You've mastered map scaling!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">0</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enlargement problems with map/building context
+        const problems = [
+            {
+                id: 1,
+                question: "A small house is 4×6 blocks. Scale it by factor 3. What are the new dimensions?",
+                hint: "Multiply each dimension by the scale factor",
+                answer: "12×18",
+                alternateAnswers: ["12x18", "12 by 18", "12,18"],
+                solution: "4×3 = 12, 6×3 = 18. New size: 12×18 blocks"
+            },
+            {
+                id: 2,
+                question: "Village fountain at (10,20) scales by factor 2 from origin. New coordinates?",
+                hint: "Multiply both coordinates by scale factor",
+                answer: "(20,40)",
+                alternateAnswers: ["20,40", "20 40"],
+                solution: "10×2 = 20, 20×2 = 40. New position: (20,40)"
+            },
+            {
+                id: 3,
+                question: "Castle tower 5 blocks wide scales to 15 blocks. What's the scale factor?",
+                hint: "New size ÷ original size",
+                answer: "3",
+                solution: "Scale factor = 15 ÷ 5 = 3"
+            },
+            {
+                id: 4,
+                question: "Map pixel at (4,8) enlarges by factor 3 from center (0,0). New position?",
+                hint: "Multiply each coordinate by 3",
+                answer: "(12,24)",
+                alternateAnswers: ["12,24", "12 24"],
+                solution: "(4×3, 8×3) = (12,24)"
+            },
+            {
+                id: 5,
+                question: "Build area is 10×10. After scaling by 4, what's the new area?",
+                hint: "Area scales by factor²",
+                answer: "1600",
+                solution: "Original: 100 blocks². Scale 4: 100 × 4² = 100 × 16 = 1600 blocks²"
+            },
+            {
+                id: 6,
+                question: "Point (6,9) enlarges by factor 2 from center (2,3). Find new coordinates.",
+                hint: "Find distance from center, multiply, then add back",
+                answer: "(10,15)",
+                alternateAnswers: ["10,15", "10 15"],
+                solution: "From (2,3): (4,6). Scale: (8,12). New: (2,3)+(8,12) = (10,15)"
+            },
+            {
+                id: 7,
+                question: "Farm plot 8×12 blocks. What dimensions for scale factor 0.5?",
+                hint: "Multiply by 0.5 (or divide by 2)",
+                answer: "4×6",
+                alternateAnswers: ["4x6", "4 by 6", "4,6"],
+                solution: "8×0.5 = 4, 12×0.5 = 6. New size: 4×6 blocks"
+            },
+            {
+                id: 8,
+                question: "Bridge length scales from 20 to 50 blocks. By what factor?",
+                hint: "New length ÷ original length",
+                answer: "2.5",
+                alternateAnswers: ["2.5", "5/2"],
+                solution: "50 ÷ 20 = 2.5"
+            },
+            {
+                id: 9,
+                question: "Tower at (3,4) scales by -2 from origin. New position?",
+                hint: "Negative scale flips and enlarges",
+                answer: "(-6,-8)",
+                alternateAnswers: ["-6,-8", "-6 -8"],
+                solution: "3×(-2) = -6, 4×(-2) = -8. Position: (-6,-8)"
+            },
+            {
+                id: 10,
+                question: "Square building 6×6 enlarges to area 324. What's the scale factor?",
+                hint: "√(new area ÷ old area)",
+                answer: "3",
+                solution: "Old area: 36. Scale² = 324÷36 = 9. Scale = √9 = 3"
+            },
+            {
+                id: 11,
+                question: "Village wall: (0,0) to (8,0). Scale by 2.5. New endpoint?",
+                hint: "Scale the endpoint coordinates",
+                answer: "(20,0)",
+                alternateAnswers: ["20,0", "20 0"],
+                solution: "8×2.5 = 20. New wall: (0,0) to (20,0)"
+            },
+            {
+                id: 12,
+                question: "Map region 15×20 blocks scales by 1/3. New dimensions?",
+                hint: "Multiply by 1/3 (or divide by 3)",
+                answer: "5×6.67",
+                alternateAnswers: ["5x6.67", "5×20/3", "5×6.7", "5×7"],
+                solution: "15÷3 = 5, 20÷3 = 6.67. New: 5×6.67 blocks"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            document.querySelector('.problem-number').textContent = `Map ${currentProblem + 1}/12`;
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Map Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+            const problem = problems[currentProblem];
+            
+            if (!userAnswer) {
+                showFeedback('Please enter an answer!', false);
+                return;
+            }
+            
+            const problemId = problem.id;
+            if (!attempts[problemId]) attempts[problemId] = 0;
+            attempts[problemId]++;
+            
+            // Check main answer and alternates
+            let isCorrect = userAnswer === problem.answer.toLowerCase();
+            if (!isCorrect && problem.alternateAnswers) {
+                isCorrect = problem.alternateAnswers.some(alt => 
+                    userAnswer === alt.toLowerCase()
+                );
+            }
+            
+            if (isCorrect) {
+                let xp = 16;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 3, 5);
+                
+                score += xp;
+                let emeraldReward = attempts[problemId] === 1 ? 3 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                saveProgress();
+            } else {
+                showFeedback(`Incorrect. ${attempts[problemId] > 2 ? `Answer: ${problem.answer}` : 'Try again!'}`, false);
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/12`;
+        }
+
+        function saveProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'enlargement');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'enlargement', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 16;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'enlargement');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 60;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 6;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) nextProblem();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Simplifying Ratios - Potion Brewing | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Simplifying Ratios</h1>
+                <p class="topic-subtitle">Potion Brewing</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/14</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">🧪</div>
+                <h2>Welcome to the Brewing Stand!</h2>
+                <p>In Minecraft, brewing potions requires precise ratios of ingredients. Master the art of simplifying ratios to create the perfect potions!</p>
+                
+                <div class="example-box">
+                    <h3>🎯 Brewing Example:</h3>
+                    <p><strong>Recipe:</strong> 6 Nether Wart : 9 Glowstone Dust</p>
+                    <p><strong>Simplified:</strong> Both divisible by 3, so 2:3</p>
+                    <p>This means for every 2 Nether Wart, you need 3 Glowstone!</p>
+                </div>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Brewing Basics:</h3>
+                    <ul>
+                        <li>Find the HCF (Highest Common Factor)</li>
+                        <li>Divide all parts by the HCF</li>
+                        <li>Convert units before simplifying</li>
+                        <li>Check your ratio still gives the same proportions</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Brewing Quest
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Potion 1/14</span>
+                    <span class="problem-xp">+12 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Brewing Notes:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your working here..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Simplified Ratio:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="e.g. 2:3 or 1:4:2"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Recipe Hint (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Test Potion
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Modal -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">✅</div>
+                <h2>Perfect Brew!</h2>
+                <p id="successMessage">Your potion is perfect!</p>
+                <div class="xp-earned">+12 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Recipe →
+                </button>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Master Alchemist!</h2>
+                <p>You've mastered all potion ratios!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">168</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">🧪14</span>
+                        <span class="stat-label">Potions Brewed</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Problem data with potion brewing context
+        const problems = [
+            {
+                id: 1,
+                context: "🧪 Healing Potion",
+                question: "A healing potion needs ingredients in the ratio 12:8. Simplify this ratio.",
+                hint: "Find the HCF of 12 and 8. What number divides into both?",
+                answer: "3:2",
+                solution: "HCF of 12 and 8 is 4. So 12:8 = 3:2"
+            },
+            {
+                id: 2,
+                context: "🧪 Speed Potion",
+                question: "Mix sugar and redstone in the ratio 15:25. What's the simplest form?",
+                hint: "What's the highest number that divides both 15 and 25?",
+                answer: "3:5",
+                solution: "HCF of 15 and 25 is 5. So 15:25 = 3:5"
+            },
+            {
+                id: 3,
+                context: "🧪 Strength Potion",
+                question: "Blaze powder, nether wart, and glowstone in ratio 18:24:30. Simplify.",
+                hint: "Find a number that divides into all three: 18, 24, and 30",
+                answer: "3:4:5",
+                solution: "HCF of 18, 24, 30 is 6. So 18:24:30 = 3:4:5"
+            },
+            {
+                id: 4,
+                context: "🧪 Night Vision",
+                question: "Golden carrot to spider eye ratio is 0.6:0.9. Express in whole numbers.",
+                hint: "Multiply both parts by 10, then simplify",
+                answer: "2:3",
+                solution: "0.6:0.9 = 6:9 = 2:3 (divide by 3)"
+            },
+            {
+                id: 5,
+                context: "🧪 Fire Resistance",
+                question: "Magma cream uses slime in ratio 3/4 : 1/2. Simplify this ratio.",
+                hint: "Convert to the same denominator first",
+                answer: "3:2",
+                solution: "3/4 : 1/2 = 3/4 : 2/4 = 3:2"
+            },
+            {
+                id: 6,
+                context: "🧪 Water Breathing",
+                question: "Mix pufferfish extract 1.2L with water 1.8L. Express as a simple ratio.",
+                hint: "Convert to mL or multiply by 10, then simplify",
+                answer: "2:3",
+                solution: "1.2:1.8 = 12:18 = 2:3 (divide by 6)"
+            },
+            {
+                id: 7,
+                context: "🧪 Invisibility Potion",
+                question: "Fermented spider eye 45g to mushroom 60g. Simplify the ratio.",
+                hint: "Find what 45 and 60 are both divisible by",
+                answer: "3:4",
+                solution: "HCF of 45 and 60 is 15. So 45:60 = 3:4"
+            },
+            {
+                id: 8,
+                context: "🧪 Leaping Potion",
+                question: "Rabbit foot powder 2.4g : Nether wart 3.2g : Water 4.0g. Simplify.",
+                hint: "Multiply by 10 to remove decimals, then find HCF",
+                answer: "3:4:5",
+                solution: "2.4:3.2:4.0 = 24:32:40 = 3:4:5 (divide by 8)"
+            },
+            {
+                id: 9,
+                context: "🧪 Poison Antidote",
+                question: "Mix milk 250ml with honey 150ml. Express in simplest form.",
+                hint: "What's the HCF of 250 and 150?",
+                answer: "5:3",
+                solution: "HCF of 250 and 150 is 50. So 250:150 = 5:3"
+            },
+            {
+                id: 10,
+                context: "🧪 Regeneration",
+                question: "Ghast tear essence 0.08L to potion base 0.12L. Simplify.",
+                hint: "Convert to mL (×1000) or just ×100",
+                answer: "2:3",
+                solution: "0.08:0.12 = 8:12 = 2:3 (divide by 4)"
+            },
+            {
+                id: 11,
+                context: "🧪 Slow Falling",
+                question: "Phantom membrane 35mg : Sugar 49mg : Water 21mg. Simplify completely.",
+                hint: "Find what divides into 35, 49, and 21",
+                answer: "5:7:3",
+                solution: "HCF of 35, 49, 21 is 7. So 35:49:21 = 5:7:3"
+            },
+            {
+                id: 12,
+                context: "🧪 Turtle Master",
+                question: "Turtle shell fragments in ratio 2/3 : 4/9. Express in simplest form.",
+                hint: "Find common denominator, then simplify",
+                answer: "3:2",
+                solution: "2/3 : 4/9 = 6/9 : 4/9 = 6:4 = 3:2"
+            },
+            {
+                id: 13,
+                context: "🧪 Luck Potion",
+                question: "Mix 1.25kg of rare herbs with 2kg of base. Simplify the ratio.",
+                hint: "Convert to grams or work with 1.25:2",
+                answer: "5:8",
+                solution: "1.25:2 = 125:200 = 5:8 (divide by 25)"
+            },
+            {
+                id: 14,
+                context: "🧪 Master's Brew",
+                question: "Final challenge: 144 redstone : 180 glowstone : 108 gunpowder. Simplify!",
+                hint: "This is a big one! Try dividing by 12 or find the HCF",
+                answer: "4:5:3",
+                solution: "HCF of 144, 180, 108 is 36. So 144:180:108 = 4:5:3"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let startTime = Date.now();
+        let attempts = {};
+
+        // Initialize
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            
+            document.querySelector('.problem-number').textContent = `Potion ${currentProblem + 1}/14`;
+            
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-context">${problem.context}</div>
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Brewing Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+            
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim().replace(/\s/g, '');
+            const problem = problems[currentProblem];
+            const problemId = problem.id;
+            
+            if (!userAnswer) {
+                showFeedback('Please enter a ratio!', false);
+                return;
+            }
+            
+            if (!attempts[problemId]) {
+                attempts[problemId] = 0;
+            }
+            attempts[problemId]++;
+            
+            // Normalize answer format
+            const normalizedUser = userAnswer.toLowerCase().replace(/\s/g, '');
+            const normalizedCorrect = problem.answer.toLowerCase().replace(/\s/g, '');
+            
+            const isCorrect = normalizedUser === normalizedCorrect;
+            
+            if (isCorrect) {
+                let xp = 12;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 2, 4);
+                
+                score += xp;
+                
+                // Award emeralds
+                let emeraldReward = attempts[problemId] === 1 ? 2 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.getElementById('successMessage').textContent = 
+                    attempts[problemId] === 1 ? 'Perfect brewing!' : 'Good work!';
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+                
+                saveProgress();
+            } else {
+                showFeedback(`Not quite right. ${attempts[problemId] > 2 ? `The answer is ${problem.answer}` : 'Try again!'}`, false);
+                
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+            
+            if ('vibrate' in navigator && !isSuccess) {
+                navigator.vibrate(200);
+            }
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/14`;
+        }
+
+        function saveProgress() {
+            const progress = {
+                topicId: 'ratios',
+                completed: currentProblem,
+                score: score,
+                hintsUsed: hintsUsed,
+                timestamp: Date.now()
+            };
+            
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'ratios');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'ratios', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 12;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            
+            if (!allProgress.topics) allProgress.topics = [];
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'ratios');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 50;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 7;
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                nextProblem();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

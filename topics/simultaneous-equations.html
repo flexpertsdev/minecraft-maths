@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Simultaneous Equations - The End Portal | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Simultaneous Equations</h1>
+                <p class="topic-subtitle">The End Portal</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/10</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">🌌</div>
+                <h2>Welcome to The End Portal!</h2>
+                <p>Master the ultimate mathematical challenge! Solve simultaneous equations to activate End Portal frames and face the Ender Dragon!</p>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Concepts:</h3>
+                    <ul>
+                        <li>Elimination method</li>
+                        <li>Substitution method</li>
+                        <li>Match coefficients</li>
+                        <li>Check both equations</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Enter The End
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Portal Frame 1/10</span>
+                    <span class="problem-xp">+18 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Calculations:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your working for solving the system..."
+                        rows="5"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Solution (x,y):</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter as: x,y"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Portal Wisdom (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Activate Frame
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">🌟</div>
+                <h2>Frame Activated!</h2>
+                <p id="successMessage">The Eye of Ender glows!</p>
+                <div class="xp-earned">+18 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Frame →
+                </button>
+            </div>
+        </div>
+
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🐉</div>
+                <h2>Portal Complete!</h2>
+                <p>You've mastered simultaneous equations!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">0</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simultaneous equations problems with End Portal context
+        const problems = [
+            {
+                id: 1,
+                question: "Eyes of Ender needed:\nx + y = 12\nx - y = 2\nFind x and y.",
+                hint: "Add the equations to eliminate y",
+                answer: "7,5",
+                alternateAnswers: ["(7,5)", "7, 5", "(7, 5)", "x=7,y=5"],
+                solution: "Add: 2x = 14, so x = 7. Then y = 5"
+            },
+            {
+                id: 2,
+                question: "Portal coordinates:\n2x + y = 10\nx + y = 7\nSolve for x and y.",
+                hint: "Subtract second from first to eliminate y",
+                answer: "3,4",
+                alternateAnswers: ["(3,4)", "3, 4", "(3, 4)", "x=3,y=4"],
+                solution: "Subtract: x = 3. Substitute: y = 4"
+            },
+            {
+                id: 3,
+                question: "Ender Pearl trades:\n3x + 2y = 16\nx + 2y = 8\nFind the values.",
+                hint: "Subtract to eliminate 2y",
+                answer: "4,2",
+                alternateAnswers: ["(4,2)", "4, 2", "(4, 2)", "x=4,y=2"],
+                solution: "Subtract: 2x = 8, so x = 4. Then y = 2"
+            },
+            {
+                id: 4,
+                question: "Dragon health calculation:\n2x + 3y = 13\nx - y = 1\nSolve the system.",
+                hint: "Use substitution: x = y + 1",
+                answer: "4,3",
+                alternateAnswers: ["(4,3)", "4, 3", "(4, 3)", "x=4,y=3"],
+                solution: "Substitute x = y + 1: 2(y+1) + 3y = 13, so y = 3, x = 4"
+            },
+            {
+                id: 5,
+                question: "End Crystal positions:\n4x + y = 14\n2x - y = 4\nFind x and y.",
+                hint: "Add equations to eliminate y",
+                answer: "3,2",
+                alternateAnswers: ["(3,2)", "3, 2", "(3, 2)", "x=3,y=2"],
+                solution: "Add: 6x = 18, so x = 3. Then y = 2"
+            },
+            {
+                id: 6,
+                question: "Obsidian blocks:\nx + 3y = 11\n2x - y = 1\nSolve for x and y.",
+                hint: "Multiply first by 2, then subtract",
+                answer: "2,3",
+                alternateAnswers: ["(2,3)", "2, 3", "(2, 3)", "x=2,y=3"],
+                solution: "2(x + 3y) = 22, subtract: 7y = 21, so y = 3, x = 2"
+            },
+            {
+                id: 7,
+                question: "Portal frame power:\n3x + 4y = 25\nx + 2y = 11\nFind the solution.",
+                hint: "Multiply second by 3, then subtract",
+                answer: "3,4",
+                alternateAnswers: ["(3,4)", "3, 4", "(3, 4)", "x=3,y=4"],
+                solution: "3(x + 2y) = 33, subtract: -2y = -8, so y = 4, x = 3"
+            },
+            {
+                id: 8,
+                question: "Enderman spawns:\n5x + 2y = 16\n3x + 2y = 12\nSolve the equations.",
+                hint: "Subtract to eliminate 2y",
+                answer: "2,3",
+                alternateAnswers: ["(2,3)", "2, 3", "(2, 3)", "x=2,y=3"],
+                solution: "Subtract: 2x = 4, so x = 2. Then y = 3"
+            },
+            {
+                id: 9,
+                question: "Dragon egg coordinates:\n2x + 5y = 19\nx - y = -1\nFind x and y.",
+                hint: "From second: x = y - 1, substitute",
+                answer: "2,3",
+                alternateAnswers: ["(2,3)", "2, 3", "(2, 3)", "x=2,y=3"],
+                solution: "Substitute: 2(y-1) + 5y = 19, so 7y = 21, y = 3, x = 2"
+            },
+            {
+                id: 10,
+                question: "Final portal activation:\n4x + 3y = 18\n2x + y = 8\nSolve to enter The End!",
+                hint: "Multiply second by 3, then subtract",
+                answer: "3,2",
+                alternateAnswers: ["(3,2)", "3, 2", "(3, 2)", "x=3,y=2"],
+                solution: "3(2x + y) = 24, subtract: -2x = -6, so x = 3, y = 2"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            document.querySelector('.problem-number').textContent = `Portal Frame ${currentProblem + 1}/10`;
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-question" style="white-space: pre-line;">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Portal Wisdom:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+        }
+
+        function normalizeAnswer(answer) {
+            return answer.toLowerCase()
+                .replace(/\s+/g, '')
+                .replace(/[()]/g, '')
+                .replace(/x=/g, '')
+                .replace(/y=/g, '');
+        }
+
+        function checkAnswer() {
+            const userAnswer = normalizeAnswer(document.getElementById('answerInput').value.trim());
+            const problem = problems[currentProblem];
+            
+            if (!userAnswer) {
+                showFeedback('Please enter your solution as x,y!', false);
+                return;
+            }
+            
+            const problemId = problem.id;
+            if (!attempts[problemId]) attempts[problemId] = 0;
+            attempts[problemId]++;
+            
+            let isCorrect = userAnswer === normalizeAnswer(problem.answer);
+            
+            if (!isCorrect && problem.alternateAnswers) {
+                isCorrect = problem.alternateAnswers.some(alt => 
+                    userAnswer === normalizeAnswer(alt)
+                );
+            }
+            
+            if (isCorrect) {
+                let xp = 18;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 3, 6);
+                
+                score += xp;
+                let emeraldReward = attempts[problemId] === 1 ? 3 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                saveProgress();
+            } else {
+                showFeedback(`Incorrect. ${attempts[problemId] > 2 ? `Answer: ${problem.answer}` : 'Try again!'}`, false);
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/10`;
+        }
+
+        function saveProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'simultaneous-equations');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'simultaneous-equations', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 18;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'simultaneous-equations');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 80;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 10;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) nextProblem();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+
+    <style>
+        /* Additional styling for equation display */
+        .problem-question {
+            font-family: monospace;
+            font-size: 1.1em;
+            line-height: 1.8;
+            background: var(--bg-card);
+            padding: var(--spacing-md);
+            border-radius: 8px;
+            border: 2px solid var(--mc-purple);
+        }
+    </style>
+</body>
+</html>

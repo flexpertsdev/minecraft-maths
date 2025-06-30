@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Solving Equations - Redstone Logic | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Solving Equations</h1>
+                <p class="topic-subtitle">Redstone Logic</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/16</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">🔴</div>
+                <h2>Welcome to Redstone Engineering!</h2>
+                <p>In Minecraft, redstone circuits must be perfectly balanced. Learn to solve equations by keeping both sides equal - just like balancing redstone signals!</p>
+                
+                <div class="example-box">
+                    <h3>🎯 Redstone Balance:</h3>
+                    <p><strong>Circuit:</strong> 2x + 3 = 11</p>
+                    <p><strong>Step 1:</strong> Remove 3 from both sides: 2x = 8</p>
+                    <p><strong>Step 2:</strong> Divide by 2: x = 4</p>
+                    <p>The signal strength is 4!</p>
+                </div>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Circuit Rules:</h3>
+                    <ul>
+                        <li>Keep both sides balanced (equal)</li>
+                        <li>Inverse operations cancel each other</li>
+                        <li>Work backwards from the output</li>
+                        <li>Test your answer in the original equation</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Circuit Building
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Circuit 1/16</span>
+                    <span class="problem-xp">+14 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Circuit Diagram:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your working here..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Signal Value (x =):</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter the value"
+                        inputmode="numeric"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Circuit Help (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ⚡ Test Circuit
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Modal -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">⚡</div>
+                <h2>Circuit Complete!</h2>
+                <p id="successMessage">Power flows perfectly!</p>
+                <div class="xp-earned">+14 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Circuit →
+                </button>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Redstone Master!</h2>
+                <p>You've mastered all redstone equations!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">224</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">⚡16</span>
+                        <span class="stat-label">Circuits Built</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Problem data with redstone circuit context
+        const problems = [
+            {
+                id: 1,
+                context: "⚡ Basic Repeater",
+                question: "Solve for signal strength: x + 7 = 15",
+                hint: "Subtract 7 from both sides to isolate x",
+                answer: 8,
+                solution: "x + 7 = 15, so x = 15 - 7 = 8"
+            },
+            {
+                id: 2,
+                context: "⚡ Comparator Circuit",
+                question: "Find the input: x - 5 = 12",
+                hint: "Add 5 to both sides",
+                answer: 17,
+                solution: "x - 5 = 12, so x = 12 + 5 = 17"
+            },
+            {
+                id: 3,
+                context: "⚡ Torch Tower",
+                question: "Calculate signal: 3x = 21",
+                hint: "Divide both sides by 3",
+                answer: 7,
+                solution: "3x = 21, so x = 21 ÷ 3 = 7"
+            },
+            {
+                id: 4,
+                context: "⚡ Piston Door",
+                question: "Power needed: x/4 = 6",
+                hint: "Multiply both sides by 4",
+                answer: 24,
+                solution: "x/4 = 6, so x = 6 × 4 = 24"
+            },
+            {
+                id: 5,
+                context: "⚡ Double Circuit",
+                question: "Balance the system: 2x + 5 = 17",
+                hint: "First subtract 5, then divide by 2",
+                answer: 6,
+                solution: "2x + 5 = 17, so 2x = 12, therefore x = 6"
+            },
+            {
+                id: 6,
+                context: "⚡ Hidden Door",
+                question: "Solve: 4x - 3 = 25",
+                hint: "Add 3, then divide by 4",
+                answer: 7,
+                solution: "4x - 3 = 25, so 4x = 28, therefore x = 7"
+            },
+            {
+                id: 7,
+                context: "⚡ Clock Circuit",
+                question: "Find timing: 5x + 2 = 37",
+                hint: "Subtract 2, then divide by 5",
+                answer: 7,
+                solution: "5x + 2 = 37, so 5x = 35, therefore x = 7"
+            },
+            {
+                id: 8,
+                context: "⚡ TNT Cannon",
+                question: "Power calculation: 3x - 8 = 16",
+                hint: "Add 8 first, then divide",
+                answer: 8,
+                solution: "3x - 8 = 16, so 3x = 24, therefore x = 8"
+            },
+            {
+                id: 9,
+                context: "⚡ Lamp Array",
+                question: "Both sides equal: 2x + 7 = x + 12",
+                hint: "Get all x terms on one side",
+                answer: 5,
+                solution: "2x - x = 12 - 7, so x = 5"
+            },
+            {
+                id: 10,
+                context: "⚡ Hopper Timer",
+                question: "Balance: 3x - 4 = x + 8",
+                hint: "Subtract x from both sides first",
+                answer: 6,
+                solution: "3x - x = 8 + 4, so 2x = 12, therefore x = 6"
+            },
+            {
+                id: 11,
+                context: "⚡ Dispenser Array",
+                question: "Complex circuit: 4x + 3 = 2x + 15",
+                hint: "Get x terms on left, numbers on right",
+                answer: 6,
+                solution: "4x - 2x = 15 - 3, so 2x = 12, therefore x = 6"
+            },
+            {
+                id: 12,
+                context: "⚡ Minecart Station",
+                question: "Track power: 5x - 7 = 2x + 8",
+                hint: "Collect like terms carefully",
+                answer: 5,
+                solution: "5x - 2x = 8 + 7, so 3x = 15, therefore x = 5"
+            },
+            {
+                id: 13,
+                context: "⚡ Farm Automation",
+                question: "Water flow: 3(x + 2) = 24",
+                hint: "Expand the bracket first or divide by 3",
+                answer: 6,
+                solution: "3(x + 2) = 24, so x + 2 = 8, therefore x = 6"
+            },
+            {
+                id: 14,
+                context: "⚡ Security System",
+                question: "Solve: 2(x - 3) = 10",
+                hint: "Divide by 2 first, then add 3",
+                answer: 8,
+                solution: "2(x - 3) = 10, so x - 3 = 5, therefore x = 8"
+            },
+            {
+                id: 15,
+                context: "⚡ Elevator Circuit",
+                question: "Height control: 4(2x + 1) = 36",
+                hint: "Divide by 4, then solve 2x + 1 = 9",
+                answer: 4,
+                solution: "4(2x + 1) = 36, so 2x + 1 = 9, so 2x = 8, therefore x = 4"
+            },
+            {
+                id: 16,
+                context: "⚡ Master Circuit",
+                question: "Final challenge: 3(x + 4) = 2(x + 9)",
+                hint: "Expand both sides, then collect terms",
+                answer: 6,
+                solution: "3x + 12 = 2x + 18, so x = 6"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let startTime = Date.now();
+        let attempts = {};
+
+        // Initialize
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            
+            document.querySelector('.problem-number').textContent = `Circuit ${currentProblem + 1}/16`;
+            
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-context">${problem.context}</div>
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Circuit Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+            
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            const problem = problems[currentProblem];
+            const problemId = problem.id;
+            
+            if (!userAnswer) {
+                showFeedback('Please enter a value!', false);
+                return;
+            }
+            
+            if (!attempts[problemId]) {
+                attempts[problemId] = 0;
+            }
+            attempts[problemId]++;
+            
+            const isCorrect = parseFloat(userAnswer) === problem.answer;
+            
+            if (isCorrect) {
+                let xp = 14;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 2, 5);
+                
+                score += xp;
+                
+                // Award emeralds
+                let emeraldReward = attempts[problemId] === 1 ? 2 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.getElementById('successMessage').textContent = 
+                    attempts[problemId] === 1 ? 'Perfect circuit!' : 'Circuit works!';
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+                
+                saveProgress();
+            } else {
+                showFeedback(`Circuit failed! ${attempts[problemId] > 2 ? `The answer is ${problem.answer}` : 'Check your calculations.'}`, false);
+                
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+            
+            if ('vibrate' in navigator && !isSuccess) {
+                navigator.vibrate(200);
+            }
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/16`;
+        }
+
+        function saveProgress() {
+            const progress = {
+                topicId: 'equations',
+                completed: currentProblem,
+                score: score,
+                hintsUsed: hintsUsed,
+                timestamp: Date.now()
+            };
+            
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'equations');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'equations', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 14;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            
+            if (!allProgress.topics) allProgress.topics = [];
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'equations');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 60;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 8;
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                nextProblem();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

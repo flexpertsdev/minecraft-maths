@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Minecraft Maths Quest - Year 9 Adventure</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* Critical inline styles for immediate rendering */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #1e1e1e;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1e1e1e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loader-content {
+            text-align: center;
+        }
+        
+        .loader-block {
+            width: 60px;
+            height: 60px;
+            background: #5d8a42;
+            margin: 0 auto 20px;
+            animation: minecraft-pulse 1.5s ease-in-out infinite;
+            image-rendering: pixelated;
+            box-shadow: 
+                3px 3px 0 #4a6f35,
+                6px 6px 0 #3d5a2a;
+        }
+        
+        @keyframes minecraft-pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-block"></div>
+            <p style="color: #5d8a42; font-weight: bold;">Loading Minecraft Maths...</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container" id="app">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="game-title">
+                    <span class="mc-text">Minecraft</span>
+                    <span class="math-text">Maths Quest</span>
+                </h1>
+                <div class="level-badge">Year 9</div>
+            </div>
+            <div class="player-stats">
+                <div class="stat-item">
+                    <span class="stat-icon">⚡</span>
+                    <span class="stat-value" id="xp">0</span>
+                    <span class="stat-label">XP</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🏆</span>
+                    <span class="stat-value" id="level">1</span>
+                    <span class="stat-label">Level</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">💎</span>
+                    <span class="stat-value" id="gems">0</span>
+                    <span class="stat-label">Gems</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Overview -->
+        <section class="progress-overview">
+            <div class="progress-card">
+                <h2 class="section-title">Your Adventure Progress</h2>
+                <div class="overall-progress">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="mainProgress"></div>
+                        <div class="progress-text">
+                            <span id="progressPercent">0%</span> Complete
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <span class="stat-number" id="topicsCompleted">0</span>
+                        <span class="stat-desc">Topics Mastered</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-number" id="totalProblems">0</span>
+                        <span class="stat-desc">Problems Solved</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-number" id="streak">0</span>
+                        <span class="stat-desc">Day Streak</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Topics Grid -->
+        <main class="topics-container">
+            <h2 class="section-title">Choose Your Quest</h2>
+            <div class="topics-grid" id="topicsGrid">
+                <!-- Topics will be dynamically inserted here -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-page="home">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item" data-page="achievements">
+                <span class="nav-icon">🏅</span>
+                <span class="nav-label">Awards</span>
+            </button>
+            <button class="nav-item" data-page="inventory">
+                <span class="nav-icon">🎒</span>
+                <span class="nav-label">Items</span>
+            </button>
+            <button class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div class="achievement-popup" id="achievementPopup">
+        <div class="achievement-content">
+            <div class="achievement-icon">🏆</div>
+            <h3 class="achievement-title">Achievement Unlocked!</h3>
+            <p class="achievement-desc" id="achievementDesc">First Steps</p>
+        </div>
+    </div>
+
+    <script>
+        // Topics data with Minecraft themes
+        const topics = [
+            {
+                id: 'substitution',
+                number: 1,
+                title: 'Substitution',
+                subtitle: 'Crafting Recipes',
+                icon: '⚒️',
+                description: 'Replace variables with numbers like crafting materials',
+                difficulty: 'easy',
+                color: '#5d8a42',
+                unlocked: true,
+                problems: 15,
+                completed: 0
+            },
+            {
+                id: 'word-problems',
+                number: 2,
+                title: 'Word Problems',
+                subtitle: 'Village Trading',
+                icon: '💰',
+                description: 'Solve real-world problems with villager trades',
+                difficulty: 'medium',
+                color: '#8B4513',
+                unlocked: true,
+                problems: 12,
+                completed: 0
+            },
+            {
+                id: 'ratios',
+                number: 3,
+                title: 'Simplifying Ratios',
+                subtitle: 'Potion Brewing',
+                icon: '🧪',
+                description: 'Mix ingredients in the perfect proportions',
+                difficulty: 'easy',
+                color: '#9D4EDD',
+                unlocked: true,
+                problems: 14,
+                completed: 0
+            },
+            {
+                id: 'equations',
+                number: 4,
+                title: 'Solving Equations',
+                subtitle: 'Redstone Logic',
+                icon: '🔴',
+                description: 'Balance equations like redstone circuits',
+                difficulty: 'medium',
+                color: '#DC143C',
+                unlocked: true,
+                problems: 16,
+                completed: 0
+            },
+            {
+                id: 'thinking-number',
+                number: 5,
+                title: 'Number Puzzles',
+                subtitle: 'Dungeon Riddles',
+                icon: '🗝️',
+                description: 'Solve ancient dungeon number mysteries',
+                difficulty: 'easy',
+                color: '#FFD700',
+                unlocked: true,
+                problems: 10,
+                completed: 0
+            },
+            {
+                id: 'compound-shapes',
+                number: 6,
+                title: 'Compound Shapes',
+                subtitle: 'Building Plans',
+                icon: '🏗️',
+                description: 'Calculate areas for complex builds',
+                difficulty: 'medium',
+                color: '#4682B4',
+                unlocked: true,
+                problems: 12,
+                completed: 0
+            },
+            {
+                id: 'scatter-graphs',
+                number: 7,
+                title: 'Scatter Graphs',
+                subtitle: 'Mob Spawning',
+                icon: '📊',
+                description: 'Plot mob spawn patterns and correlations',
+                difficulty: 'medium',
+                color: '#FF6347',
+                unlocked: false,
+                problems: 10,
+                completed: 0
+            },
+            {
+                id: 'two-way-tables',
+                number: 8,
+                title: 'Two-Way Tables',
+                subtitle: 'Inventory Management',
+                icon: '📋',
+                description: 'Organize your items with data tables',
+                difficulty: 'easy',
+                color: '#32CD32',
+                unlocked: false,
+                problems: 10,
+                completed: 0
+            },
+            {
+                id: 'enlargement',
+                number: 9,
+                title: 'Enlargement',
+                subtitle: 'Map Scaling',
+                icon: '🗺️',
+                description: 'Scale builds and maps accurately',
+                difficulty: 'hard',
+                color: '#FF8C00',
+                unlocked: false,
+                problems: 12,
+                completed: 0
+            },
+            {
+                id: 'estimations',
+                number: 10,
+                title: 'Estimations',
+                subtitle: 'Resource Planning',
+                icon: '📏',
+                description: 'Estimate materials for mega builds',
+                difficulty: 'easy',
+                color: '#4B0082',
+                unlocked: false,
+                problems: 10,
+                completed: 0
+            },
+            {
+                id: 'expanding-brackets',
+                number: 11,
+                title: 'Expanding Brackets',
+                subtitle: 'TNT Calculations',
+                icon: '💥',
+                description: 'Expand expressions like TNT blast radius',
+                difficulty: 'medium',
+                color: '#FF0000',
+                unlocked: false,
+                problems: 14,
+                completed: 0
+            },
+            {
+                id: 'factorising',
+                number: 12,
+                title: 'Factorising',
+                subtitle: 'Enchantment Tables',
+                icon: '✨',
+                description: 'Factor expressions like enchantment combos',
+                difficulty: 'hard',
+                color: '#9370DB',
+                unlocked: false,
+                problems: 12,
+                completed: 0
+            },
+            {
+                id: 'simultaneous-equations',
+                number: 13,
+                title: 'Simultaneous Equations',
+                subtitle: 'The End Portal',
+                icon: '🌌',
+                description: 'Solve the final mathematical challenge',
+                difficulty: 'hard',
+                color: '#191970',
+                unlocked: false,
+                problems: 10,
+                completed: 0
+            }
+        ];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved progress
+            loadProgress();
+            
+            // Render topics
+            renderTopics();
+            
+            // Hide loader
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+            }, 1000);
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Check for achievements
+            checkAchievements();
+        });
+
+        function loadProgress() {
+            const savedData = localStorage.getItem('minecraftMathsProgress');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                document.getElementById('xp').textContent = data.xp || 0;
+                document.getElementById('level').textContent = data.level || 1;
+                document.getElementById('gems').textContent = data.gems || 0;
+                
+                // Update topics progress
+                if (data.topics) {
+                    data.topics.forEach(savedTopic => {
+                        const topic = topics.find(t => t.id === savedTopic.id);
+                        if (topic) {
+                            topic.completed = savedTopic.completed || 0;
+                            topic.unlocked = savedTopic.unlocked || topic.unlocked;
+                        }
+                    });
+                }
+            }
+            
+            updateProgressStats();
+        }
+
+        function updateProgressStats() {
+            let totalCompleted = 0;
+            let totalProblems = 0;
+            let topicsCompleted = 0;
+            
+            topics.forEach(topic => {
+                totalCompleted += topic.completed;
+                totalProblems += topic.problems;
+                if (topic.completed === topic.problems) {
+                    topicsCompleted++;
+                }
+            });
+            
+            const progressPercent = Math.round((totalCompleted / totalProblems) * 100);
+            
+            document.getElementById('progressPercent').textContent = progressPercent + '%';
+            document.getElementById('mainProgress').style.width = progressPercent + '%';
+            document.getElementById('topicsCompleted').textContent = topicsCompleted;
+            document.getElementById('totalProblems').textContent = totalCompleted;
+            
+            // Update streak (simplified)
+            const lastVisit = localStorage.getItem('lastVisit');
+            const today = new Date().toDateString();
+            if (lastVisit !== today) {
+                localStorage.setItem('lastVisit', today);
+                const streak = parseInt(localStorage.getItem('streak') || 0) + 1;
+                localStorage.setItem('streak', streak);
+                document.getElementById('streak').textContent = streak;
+            } else {
+                document.getElementById('streak').textContent = localStorage.getItem('streak') || 1;
+            }
+        }
+
+        function renderTopics() {
+            const grid = document.getElementById('topicsGrid');
+            grid.innerHTML = '';
+            
+            topics.forEach((topic, index) => {
+                const isLocked = !topic.unlocked;
+                const isCompleted = topic.completed === topic.problems;
+                
+                const topicCard = document.createElement('div');
+                topicCard.className = `topic-card ${isLocked ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`;
+                topicCard.style.setProperty('--topic-color', topic.color);
+                
+                topicCard.innerHTML = `
+                    <div class="topic-header">
+                        <div class="topic-icon">${topic.icon}</div>
+                        <div class="topic-number">#${topic.number}</div>
+                    </div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">${topic.title}</h3>
+                        <p class="topic-subtitle">${topic.subtitle}</p>
+                        <p class="topic-desc">${topic.description}</p>
+                        <div class="topic-progress">
+                            <div class="progress-mini">
+                                <div class="progress-mini-bar" style="width: ${(topic.completed / topic.problems) * 100}%"></div>
+                            </div>
+                            <span class="progress-text">${topic.completed}/${topic.problems}</span>
+                        </div>
+                        <div class="topic-footer">
+                            <span class="difficulty ${topic.difficulty}">${topic.difficulty}</span>
+                            ${isLocked ? '<span class="locked-text">🔒 Locked</span>' : 
+                              isCompleted ? '<span class="completed-text">✅ Complete</span>' : 
+                              '<button class="start-btn">Start Quest</button>'}
+                        </div>
+                    </div>
+                `;
+                
+                if (!isLocked && !isCompleted) {
+                    topicCard.addEventListener('click', () => startTopic(topic));
+                }
+                
+                grid.appendChild(topicCard);
+            });
+        }
+
+        function startTopic(topic) {
+            // Save current state
+            saveProgress();
+            
+            // Navigate to topic page
+            window.location.href = `topics/${topic.id}.html`;
+        }
+
+        function saveProgress() {
+            const progressData = {
+                xp: parseInt(document.getElementById('xp').textContent),
+                level: parseInt(document.getElementById('level').textContent),
+                gems: parseInt(document.getElementById('gems').textContent),
+                topics: topics.map(t => ({
+                    id: t.id,
+                    completed: t.completed,
+                    unlocked: t.unlocked
+                }))
+            };
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(progressData));
+        }
+
+        function setupEventListeners() {
+            // Bottom navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Handle navigation (simplified for demo)
+                    const page = this.dataset.page;
+                    if (page === 'achievements') {
+                        showAchievements();
+                    }
+                });
+            });
+            
+            // Save progress on page unload
+            window.addEventListener('beforeunload', saveProgress);
+        }
+
+        function checkAchievements() {
+            // Check for various achievements
+            const totalCompleted = topics.reduce((sum, t) => sum + t.completed, 0);
+            
+            if (totalCompleted === 1 && !localStorage.getItem('firstSteps')) {
+                localStorage.setItem('firstSteps', 'true');
+                showAchievement('First Steps', 'Complete your first problem!');
+            }
+        }
+
+        function showAchievement(title, desc) {
+            const popup = document.getElementById('achievementPopup');
+            document.getElementById('achievementDesc').textContent = desc;
+            
+            popup.classList.add('show');
+            
+            // Play sound if available
+            if ('vibrate' in navigator) {
+                navigator.vibrate(200);
+            }
+            
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 3000);
+            
+            // Award XP
+            const currentXP = parseInt(document.getElementById('xp').textContent);
+            document.getElementById('xp').textContent = currentXP + 50;
+            
+            // Check for level up
+            checkLevelUp();
+        }
+
+        function checkLevelUp() {
+            const xp = parseInt(document.getElementById('xp').textContent);
+            const currentLevel = parseInt(document.getElementById('level').textContent);
+            const newLevel = Math.floor(xp / 500) + 1;
+            
+            if (newLevel > currentLevel) {
+                document.getElementById('level').textContent = newLevel;
+                showAchievement('Level Up!', `You reached level ${newLevel}!`);
+                
+                // Unlock new topics
+                if (newLevel === 2) {
+                    topics[6].unlocked = true;
+                    topics[7].unlocked = true;
+                }
+                
+                renderTopics();
+            }
+        }
+
+        function showAchievements() {
+            // This would show an achievements page
+            alert('Achievements page coming soon!');
+        }
+    </script>
+</body>
+</html>

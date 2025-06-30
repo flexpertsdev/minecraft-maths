@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Scatter Graphs - Mob Spawning | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Scatter Graphs</h1>
+                <p class="topic-subtitle">Mob Spawning</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/10</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">📊</div>
+                <h2>Welcome to Mob Research Lab!</h2>
+                <p>Analyze mob spawning patterns using scatter graphs. Find correlations between light levels, time, and mob appearances!</p>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Concepts:</h3>
+                    <ul>
+                        <li>Plot data points on coordinate grids</li>
+                        <li>Identify positive/negative correlations</li>
+                        <li>Draw lines of best fit</li>
+                        <li>Make predictions from patterns</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Research
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Research 1/10</span>
+                    <span class="problem-xp">+12 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Analysis:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Describe the correlation and your findings..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Your Answer:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter your answer"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Research Tip (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Submit Findings
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals remain the same -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">✅</div>
+                <h2>Excellent Research!</h2>
+                <p id="successMessage">Your analysis is correct!</p>
+                <div class="xp-earned">+12 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Study →
+                </button>
+            </div>
+        </div>
+
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Research Complete!</h2>
+                <p>You've mastered mob spawn analysis!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">0</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Scatter graph problems with mob spawning context
+        const problems = [
+            {
+                id: 1,
+                question: "Light level vs Zombie spawns: (0,8), (2,7), (4,5), (6,3), (8,1). What type of correlation?",
+                hint: "As light level increases, what happens to zombie spawns?",
+                answer: "negative",
+                solution: "Negative correlation - more light means fewer zombies"
+            },
+            {
+                id: 2,
+                question: "Time (hours) vs Spider spawns show positive correlation. If 2 hours = 4 spiders, predict for 5 hours.",
+                hint: "Find the rate: spiders per hour",
+                answer: "10",
+                solution: "Rate = 4/2 = 2 spiders/hour. So 5 hours = 10 spiders"
+            },
+            {
+                id: 3,
+                question: "Cave depth (m) vs Diamond finds: (10,1), (20,3), (30,5), (40,7). Predict diamonds at 50m depth.",
+                hint: "Look for the pattern in the increase",
+                answer: "9",
+                solution: "Pattern: +2 diamonds per 10m. So 50m = 9 diamonds"
+            },
+            {
+                id: 4,
+                question: "Moon phase (1-8) vs Slime spawns show: 1→2, 4→8, 8→16. What's the relationship?",
+                hint: "Check if it's doubling or another pattern",
+                answer: "doubles",
+                solution: "Slime spawns double with each moon phase"
+            },
+            {
+                id: 5,
+                question: "Distance from spawn vs Enderman sightings: Strong positive correlation. True or False?",
+                hint: "Endermen are rare near spawn, common far away",
+                answer: "true",
+                solution: "True - Endermen spawn more frequently far from world spawn"
+            },
+            {
+                id: 6,
+                question: "Y-level vs Iron ore: Peak at Y=16 with 8 ore, drops to 4 at Y=8 and Y=24. What Y gives 6 ore?",
+                hint: "It's symmetric around Y=16",
+                answer: "12 or 20",
+                solution: "The graph is symmetric, so Y=12 or Y=20 both give 6 ore"
+            },
+            {
+                id: 7,
+                question: "Villager count vs Iron golem spawns: 10→0, 20→1, 30→2. How many villagers for 3 golems?",
+                hint: "Find the pattern: villagers needed per golem",
+                answer: "40",
+                solution: "Pattern: 1 golem per 10 villagers after first 10. So 40 villagers = 3 golems"
+            },
+            {
+                id: 8,
+                question: "Redstone power (0-15) vs piston extension perfectly linear. If power 5 = 33%, what's 15?",
+                hint: "Find the rate per power level",
+                answer: "100",
+                solution: "Rate: 33%/5 = 6.6% per level. So 15 × 6.6% ≈ 100%"
+            },
+            {
+                id: 9,
+                question: "Hostile mobs vs Peaceful mobs show correlation coefficient -0.9. Strong or weak?",
+                hint: "Values close to -1 or 1 are strong",
+                answer: "strong",
+                solution: "Strong negative correlation (-0.9 is very close to -1)"
+            },
+            {
+                id: 10,
+                question: "Creeper damage vs distance: (1m,49), (2m,35), (3m,24), (4m,15), (5m,7). Damage at 3.5m?",
+                hint: "Find the value between 3m and 4m",
+                answer: "19.5",
+                solution: "Between 24 and 15, midpoint ≈ 19.5 damage"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            document.querySelector('.problem-number').textContent = `Research ${currentProblem + 1}/10`;
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Research Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+            const problem = problems[currentProblem];
+            
+            if (!userAnswer) {
+                showFeedback('Please enter an answer!', false);
+                return;
+            }
+            
+            const problemId = problem.id;
+            if (!attempts[problemId]) attempts[problemId] = 0;
+            attempts[problemId]++;
+            
+            // Check various answer formats
+            let isCorrect = false;
+            if (typeof problem.answer === 'number') {
+                isCorrect = parseFloat(userAnswer) === problem.answer;
+            } else {
+                isCorrect = userAnswer === problem.answer.toLowerCase() || 
+                           userAnswer.includes(problem.answer.toLowerCase());
+            }
+            
+            if (isCorrect) {
+                let xp = 12;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 2, 4);
+                
+                score += xp;
+                let emeraldReward = attempts[problemId] === 1 ? 2 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                saveProgress();
+            } else {
+                showFeedback(`Not quite. ${attempts[problemId] > 2 ? `Answer: ${problem.answer}` : 'Try again!'}`, false);
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/10`;
+        }
+
+        function saveProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'scatter-graphs');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'scatter-graphs', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 12;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'scatter-graphs');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 50;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 5;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) nextProblem();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Two-Way Tables - Inventory Management | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Two-Way Tables</h1>
+                <p class="topic-subtitle">Inventory Management</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/10</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">📋</div>
+                <h2>Welcome to the Storage Room!</h2>
+                <p>Master inventory organization using two-way tables. Track items across chests and categories like a pro!</p>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Concepts:</h3>
+                    <ul>
+                        <li>Organize data in rows and columns</li>
+                        <li>Calculate row and column totals</li>
+                        <li>Find missing values using totals</li>
+                        <li>Analyze frequency distributions</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Organizing
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Chest 1/10</span>
+                    <span class="problem-xp">+10 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="table-area" id="tableArea">
+                    <!-- Table will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Calculations:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your working..."
+                        rows="3"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Your Answer:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter your answer"
+                        inputmode="numeric"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Storage Tip (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Check Inventory
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals remain the same -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">✅</div>
+                <h2>Perfect Organization!</h2>
+                <p id="successMessage">Your inventory is correct!</p>
+                <div class="xp-earned">+10 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Chest →
+                </button>
+            </div>
+        </div>
+
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Master Organizer!</h2>
+                <p>You've mastered inventory management!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">0</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Two-way table problems with inventory context
+        const problems = [
+            {
+                id: 1,
+                question: "Steve's chest organization: How many iron ingots in Chest B?",
+                table: {
+                    headers: ["", "Chest A", "Chest B", "Total"],
+                    rows: [
+                        ["Iron", "15", "?", "27"],
+                        ["Gold", "8", "12", "20"],
+                        ["Total", "23", "24", "47"]
+                    ]
+                },
+                hint: "Use the total: 27 - 15 = ?",
+                answer: 12,
+                solution: "Iron total is 27, Chest A has 15, so Chest B: 27 - 15 = 12"
+            },
+            {
+                id: 2,
+                question: "Tool storage: Find the total number of tools.",
+                table: {
+                    headers: ["", "Wood", "Stone", "Iron", "Total"],
+                    rows: [
+                        ["Pickaxes", "3", "5", "2", "10"],
+                        ["Swords", "2", "4", "3", "9"],
+                        ["Total", "5", "9", "5", "?"]
+                    ]
+                },
+                hint: "Add all the column totals: 5 + 9 + 5",
+                answer: 19,
+                solution: "Total = 5 + 9 + 5 = 19 tools"
+            },
+            {
+                id: 3,
+                question: "Mob drops inventory: How many bones from skeletons?",
+                table: {
+                    headers: ["", "Zombies", "Skeletons", "Spiders", "Total"],
+                    rows: [
+                        ["Bones", "0", "?", "0", "18"],
+                        ["String", "0", "0", "14", "14"],
+                        ["Total", "10", "20", "14", "44"]
+                    ]
+                },
+                hint: "Only skeletons drop bones, and total bones = 18",
+                answer: 18,
+                solution: "All 18 bones must be from skeletons"
+            },
+            {
+                id: 4,
+                question: "Farm produce: Find carrots in Large chest.",
+                table: {
+                    headers: ["", "Small", "Medium", "Large", "Total"],
+                    rows: [
+                        ["Wheat", "10", "15", "20", "45"],
+                        ["Carrots", "5", "12", "?", "30"],
+                        ["Total", "15", "27", "33", "75"]
+                    ]
+                },
+                hint: "Carrot total is 30, subtract other chests: 30 - 5 - 12",
+                answer: 13,
+                solution: "30 - 5 - 12 = 13 carrots in Large chest"
+            },
+            {
+                id: 5,
+                question: "Potion ingredients: Find spider eyes in Nether chest.",
+                table: {
+                    headers: ["", "Overworld", "Nether", "Total"],
+                    rows: [
+                        ["Blaze Powder", "0", "24", "24"],
+                        ["Spider Eyes", "15", "?", "22"],
+                        ["Total", "15", "31", "46"]
+                    ]
+                },
+                hint: "Total spider eyes minus Overworld amount",
+                answer: 7,
+                solution: "22 - 15 = 7 spider eyes in Nether chest"
+            },
+            {
+                id: 6,
+                question: "Building blocks: Find total stone blocks.",
+                table: {
+                    headers: ["", "Oak", "Stone", "Glass", "Total"],
+                    rows: [
+                        ["Floor 1", "20", "30", "10", "60"],
+                        ["Floor 2", "15", "?", "20", "70"],
+                        ["Total", "35", "75", "30", "140"]
+                    ]
+                },
+                hint: "Floor 2 total is 70, subtract oak and glass",
+                answer: 35,
+                solution: "Floor 2: 70 - 15 - 20 = 35 stone blocks"
+            },
+            {
+                id: 7,
+                question: "Armor sets: How many total diamond pieces?",
+                table: {
+                    headers: ["", "Leather", "Iron", "Diamond", "Total"],
+                    rows: [
+                        ["Helmets", "4", "3", "2", "9"],
+                        ["Chestplates", "4", "2", "1", "7"],
+                        ["Total", "8", "5", "?", "16"]
+                    ]
+                },
+                hint: "Add diamond helmets and chestplates",
+                answer: 3,
+                solution: "Diamond total = 2 + 1 = 3 pieces"
+            },
+            {
+                id: 8,
+                question: "Enchanted books: Find Sharpness in End chest.",
+                table: {
+                    headers: ["", "Village", "Dungeon", "End", "Total"],
+                    rows: [
+                        ["Protection", "3", "5", "2", "10"],
+                        ["Sharpness", "2", "4", "?", "9"],
+                        ["Total", "5", "9", "5", "19"]
+                    ]
+                },
+                hint: "Sharpness total minus other locations",
+                answer: 3,
+                solution: "9 - 2 - 4 = 3 Sharpness books in End chest"
+            },
+            {
+                id: 9,
+                question: "Food storage: Find the missing value.",
+                table: {
+                    headers: ["", "Bread", "Steak", "Total"],
+                    rows: [
+                        ["Kitchen", "12", "8", "20"],
+                        ["Storage", "?", "15", "30"],
+                        ["Total", "27", "23", "50"]
+                    ]
+                },
+                hint: "Storage total is 30, steak is 15",
+                answer: 15,
+                solution: "Storage: 30 - 15 = 15 bread"
+            },
+            {
+                id: 10,
+                question: "Redstone components: Find total pistons.",
+                table: {
+                    headers: ["", "Repeaters", "Pistons", "Comparators", "Total"],
+                    rows: [
+                        ["Chest 1", "10", "?", "5", "23"],
+                        ["Chest 2", "8", "12", "7", "27"],
+                        ["Total", "18", "20", "12", "50"]
+                    ]
+                },
+                hint: "Chest 1 total is 23, subtract other items",
+                answer: 8,
+                solution: "Chest 1: 23 - 10 - 5 = 8 pistons"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            document.querySelector('.problem-number').textContent = `Chest ${currentProblem + 1}/10`;
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Create table
+            let tableHTML = '<table class="inventory-table"><thead><tr>';
+            problem.table.headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+            
+            problem.table.rows.forEach(row => {
+                tableHTML += '<tr>';
+                row.forEach((cell, index) => {
+                    const tag = index === 0 ? 'th' : 'td';
+                    const cellClass = cell === '?' ? 'missing-value' : '';
+                    tableHTML += `<${tag} class="${cellClass}">${cell}</${tag}>`;
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('tableArea').innerHTML = tableHTML;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Storage Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            const problem = problems[currentProblem];
+            
+            if (!userAnswer) {
+                showFeedback('Please enter an answer!', false);
+                return;
+            }
+            
+            const problemId = problem.id;
+            if (!attempts[problemId]) attempts[problemId] = 0;
+            attempts[problemId]++;
+            
+            const isCorrect = parseFloat(userAnswer) === problem.answer;
+            
+            if (isCorrect) {
+                let xp = 10;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 2, 3);
+                
+                score += xp;
+                let emeraldReward = attempts[problemId] === 1 ? 2 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                saveProgress();
+            } else {
+                showFeedback(`Incorrect. ${attempts[problemId] > 2 ? `Answer: ${problem.answer}` : 'Try again!'}`, false);
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/10`;
+        }
+
+        function saveProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'two-way-tables');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'two-way-tables', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 10;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'two-way-tables');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 50;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 5;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) nextProblem();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+
+    <style>
+        .table-area {
+            margin: var(--spacing-lg) 0;
+            overflow-x: auto;
+        }
+        
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .inventory-table th,
+        .inventory-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .inventory-table thead th {
+            background: var(--mc-stone);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .inventory-table tbody th {
+            background: var(--mc-dark-gray);
+            color: white;
+            font-weight: bold;
+            text-align: left;
+        }
+        
+        .inventory-table .missing-value {
+            background: var(--mc-gold);
+            color: var(--mc-dark);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .inventory-table tr:last-child {
+            border-top: 2px solid var(--mc-stone);
+            font-weight: bold;
+        }
+        
+        .inventory-table td:last-child,
+        .inventory-table th:last-child {
+            border-left: 2px solid var(--mc-stone);
+        }
+    </style>
+</body>
+</html>

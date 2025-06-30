@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Estimations - Resource Planning | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Estimations</h1>
+                <p class="topic-subtitle">Resource Planning</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/10</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">📏</div>
+                <h2>Welcome to the Builder's Office!</h2>
+                <p>Master estimation techniques for mega builds! Round numbers smartly to plan resources efficiently.</p>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Concepts:</h3>
+                    <ul>
+                        <li>Round to nearest 10, 100, or 1000</li>
+                        <li>Estimate calculations quickly</li>
+                        <li>1 significant figure rounding</li>
+                        <li>Check reasonableness of answers</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Planning
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Project 1/10</span>
+                    <span class="problem-xp">+10 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Estimation:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your rounding and estimation..."
+                        rows="3"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Estimated Answer:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter your estimate"
+                        inputmode="numeric"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Planning Tip (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Check Estimate
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">✅</div>
+                <h2>Good Estimation!</h2>
+                <p id="successMessage">Your planning is on point!</p>
+                <div class="xp-earned">+10 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Project →
+                </button>
+            </div>
+        </div>
+
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Master Planner!</h2>
+                <p>You've mastered resource estimation!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">0</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estimation problems with building/resource context
+        const problems = [
+            {
+                id: 1,
+                question: "Castle wall needs 478 stone blocks. Estimate to nearest hundred.",
+                hint: "478 is closer to 500 than 400",
+                answer: 500,
+                solution: "478 rounds to 500 (nearest hundred)"
+            },
+            {
+                id: 2,
+                question: "Estimate 39 × 21 for torch spacing in a mine.",
+                hint: "Round to 40 × 20",
+                answer: 800,
+                solution: "39 ≈ 40, 21 ≈ 20. So 40 × 20 = 800"
+            },
+            {
+                id: 3,
+                question: "Village has 2,847 blocks. Round to 1 significant figure.",
+                hint: "Keep only the first digit, rest become zeros",
+                answer: 3000,
+                solution: "2,847 → 3,000 (1 s.f.)"
+            },
+            {
+                id: 4,
+                question: "Estimate: 612 ÷ 29 for rows of wheat.",
+                hint: "Round to 600 ÷ 30",
+                answer: 20,
+                solution: "612 ≈ 600, 29 ≈ 30. So 600 ÷ 30 = 20"
+            },
+            {
+                id: 5,
+                question: "Bridge needs 184 + 267 + 195 planks. Estimate total.",
+                hint: "Round each to nearest 10 or 100",
+                answer: 650,
+                alternateAnswers: [640, 700],
+                solution: "180 + 270 + 200 = 650 (or 200 + 300 + 200 = 700)"
+            },
+            {
+                id: 6,
+                question: "Estimate 78.4 × 5.2 for farm area.",
+                hint: "Round to 80 × 5",
+                answer: 400,
+                solution: "78.4 ≈ 80, 5.2 ≈ 5. So 80 × 5 = 400"
+            },
+            {
+                id: 7,
+                question: "Tower uses 3,456 blocks. Estimate for 12 towers.",
+                hint: "Round 3,456 to 3,500 then multiply",
+                answer: 42000,
+                alternateAnswers: [40000],
+                solution: "3,456 ≈ 3,500. So 3,500 × 12 = 42,000"
+            },
+            {
+                id: 8,
+                question: "Minecart track: 892m long. Round to 1 s.f.",
+                hint: "Which hundred is 892 closest to?",
+                answer: 900,
+                solution: "892 → 900 (1 significant figure)"
+            },
+            {
+                id: 9,
+                question: "Estimate: 47% of 298 villagers need beds.",
+                hint: "Use 50% of 300",
+                answer: 150,
+                solution: "47% ≈ 50%, 298 ≈ 300. So 50% of 300 = 150"
+            },
+            {
+                id: 10,
+                question: "Storage needs √398 chests. Estimate to nearest whole.",
+                hint: "√400 = 20",
+                answer: 20,
+                solution: "398 ≈ 400, and √400 = 20"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            document.querySelector('.problem-number').textContent = `Project ${currentProblem + 1}/10`;
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Planning Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            const problem = problems[currentProblem];
+            
+            if (!userAnswer) {
+                showFeedback('Please enter an estimate!', false);
+                return;
+            }
+            
+            const problemId = problem.id;
+            if (!attempts[problemId]) attempts[problemId] = 0;
+            attempts[problemId]++;
+            
+            let isCorrect = parseFloat(userAnswer) === problem.answer;
+            
+            // Check alternate answers if available
+            if (!isCorrect && problem.alternateAnswers) {
+                isCorrect = problem.alternateAnswers.includes(parseFloat(userAnswer));
+            }
+            
+            if (isCorrect) {
+                let xp = 10;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 2, 3);
+                
+                score += xp;
+                let emeraldReward = attempts[problemId] === 1 ? 2 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                saveProgress();
+            } else {
+                showFeedback(`Not quite. ${attempts[problemId] > 2 ? `Answer: ${problem.answer}` : 'Try again!'}`, false);
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/10`;
+        }
+
+        function saveProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'estimations');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'estimations', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 10;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'estimations');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 50;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 5;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) nextProblem();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

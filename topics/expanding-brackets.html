@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Expanding Brackets - TNT Calculations | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Expanding Brackets</h1>
+                <p class="topic-subtitle">TNT Calculations</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/14</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">💥</div>
+                <h2>Welcome to the Demolition Zone!</h2>
+                <p>Master TNT blast calculations by expanding algebraic expressions. Calculate explosion patterns like a pro!</p>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Concepts:</h3>
+                    <ul>
+                        <li>Single bracket: a(b + c) = ab + ac</li>
+                        <li>Double brackets: (a + b)(c + d)</li>
+                        <li>Watch the signs: -(a + b) = -a - b</li>
+                        <li>Collect like terms after expanding</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Blasting
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Blast 1/14</span>
+                    <span class="problem-xp">+14 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Calculations:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your expansion steps..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Expanded Form:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter the expanded expression"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Blast Tip (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Detonate
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">💥</div>
+                <h2>Perfect Blast!</h2>
+                <p id="successMessage">Calculations correct!</p>
+                <div class="xp-earned">+14 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next TNT →
+                </button>
+            </div>
+        </div>
+
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Demolition Expert!</h2>
+                <p>You've mastered TNT calculations!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">0</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Expanding brackets problems with TNT context
+        const problems = [
+            {
+                id: 1,
+                question: "TNT power calculation: Expand 3(x + 4)",
+                hint: "Multiply 3 by each term inside",
+                answer: "3x+12",
+                alternateAnswers: ["3x + 12"],
+                solution: "3(x + 4) = 3×x + 3×4 = 3x + 12"
+            },
+            {
+                id: 2,
+                question: "Blast radius: Expand 2(y - 5)",
+                hint: "Don't forget 2 × (-5) = -10",
+                answer: "2y-10",
+                alternateAnswers: ["2y - 10"],
+                solution: "2(y - 5) = 2y - 10"
+            },
+            {
+                id: 3,
+                question: "Chain reaction: Expand -4(x + 3)",
+                hint: "Negative times positive = negative",
+                answer: "-4x-12",
+                alternateAnswers: ["-4x - 12"],
+                solution: "-4(x + 3) = -4x - 12"
+            },
+            {
+                id: 4,
+                question: "Multiple TNT: Expand x(x + 7)",
+                hint: "x times x = x²",
+                answer: "x²+7x",
+                alternateAnswers: ["x^2+7x", "x^2 + 7x", "x² + 7x"],
+                solution: "x(x + 7) = x² + 7x"
+            },
+            {
+                id: 5,
+                question: "Damage zone: Expand (x + 2)(x + 3)",
+                hint: "FOIL: First, Outer, Inner, Last",
+                answer: "x²+5x+6",
+                alternateAnswers: ["x^2+5x+6", "x^2 + 5x + 6", "x² + 5x + 6"],
+                solution: "(x + 2)(x + 3) = x² + 3x + 2x + 6 = x² + 5x + 6"
+            },
+            {
+                id: 6,
+                question: "Explosion pattern: Expand (x - 4)(x + 1)",
+                hint: "Don't forget: -4 × 1 = -4",
+                answer: "x²-3x-4",
+                alternateAnswers: ["x^2-3x-4", "x^2 - 3x - 4", "x² - 3x - 4"],
+                solution: "(x - 4)(x + 1) = x² + x - 4x - 4 = x² - 3x - 4"
+            },
+            {
+                id: 7,
+                question: "TNT efficiency: Expand 3x(2x - 1)",
+                hint: "3x × 2x = 6x²",
+                answer: "6x²-3x",
+                alternateAnswers: ["6x^2-3x", "6x^2 - 3x", "6x² - 3x"],
+                solution: "3x(2x - 1) = 6x² - 3x"
+            },
+            {
+                id: 8,
+                question: "Blast spread: Expand -(2x + 5)",
+                hint: "Negative of everything inside",
+                answer: "-2x-5",
+                alternateAnswers: ["-2x - 5"],
+                solution: "-(2x + 5) = -2x - 5"
+            },
+            {
+                id: 9,
+                question: "TNT array: Expand (2x + 1)(x + 4)",
+                hint: "2x × x = 2x², 2x × 4 = 8x",
+                answer: "2x²+9x+4",
+                alternateAnswers: ["2x^2+9x+4", "2x^2 + 9x + 4", "2x² + 9x + 4"],
+                solution: "(2x + 1)(x + 4) = 2x² + 8x + x + 4 = 2x² + 9x + 4"
+            },
+            {
+                id: 10,
+                question: "Controlled blast: Expand (x - 3)²",
+                hint: "(x - 3)² = (x - 3)(x - 3)",
+                answer: "x²-6x+9",
+                alternateAnswers: ["x^2-6x+9", "x^2 - 6x + 9", "x² - 6x + 9"],
+                solution: "(x - 3)² = x² - 3x - 3x + 9 = x² - 6x + 9"
+            },
+            {
+                id: 11,
+                question: "Max damage: Expand (3x + 2)(2x - 1)",
+                hint: "3x × 2x = 6x²",
+                answer: "6x²+x-2",
+                alternateAnswers: ["6x^2+x-2", "6x^2 + x - 2", "6x² + x - 2"],
+                solution: "(3x + 2)(2x - 1) = 6x² - 3x + 4x - 2 = 6x² + x - 2"
+            },
+            {
+                id: 12,
+                question: "TNT cannon: Expand 2(x + 3) + 3(x - 1)",
+                hint: "Expand each bracket separately",
+                answer: "5x+3",
+                alternateAnswers: ["5x + 3"],
+                solution: "2(x + 3) + 3(x - 1) = 2x + 6 + 3x - 3 = 5x + 3"
+            },
+            {
+                id: 13,
+                question: "Blast sequence: Expand (x + 5)² - 25",
+                hint: "Expand (x + 5)² first",
+                answer: "x²+10x",
+                alternateAnswers: ["x^2+10x", "x^2 + 10x", "x² + 10x"],
+                solution: "(x + 5)² - 25 = x² + 10x + 25 - 25 = x² + 10x"
+            },
+            {
+                id: 14,
+                question: "Ultimate TNT: Expand (2x - 3)(2x + 3)",
+                hint: "Difference of squares pattern",
+                answer: "4x²-9",
+                alternateAnswers: ["4x^2-9", "4x^2 - 9", "4x² - 9"],
+                solution: "(2x - 3)(2x + 3) = 4x² + 6x - 6x - 9 = 4x² - 9"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            document.querySelector('.problem-number').textContent = `Blast ${currentProblem + 1}/14`;
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Blast Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+        }
+
+        function normalizeExpression(expr) {
+            return expr.toLowerCase()
+                .replace(/\s+/g, '')
+                .replace(/\*/g, '')
+                .replace(/\^/g, '²');
+        }
+
+        function checkAnswer() {
+            const userAnswer = normalizeExpression(document.getElementById('answerInput').value.trim());
+            const problem = problems[currentProblem];
+            
+            if (!userAnswer) {
+                showFeedback('Please enter the expanded form!', false);
+                return;
+            }
+            
+            const problemId = problem.id;
+            if (!attempts[problemId]) attempts[problemId] = 0;
+            attempts[problemId]++;
+            
+            let isCorrect = userAnswer === normalizeExpression(problem.answer);
+            
+            if (!isCorrect && problem.alternateAnswers) {
+                isCorrect = problem.alternateAnswers.some(alt => 
+                    userAnswer === normalizeExpression(alt)
+                );
+            }
+            
+            if (isCorrect) {
+                let xp = 14;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 3, 5);
+                
+                score += xp;
+                let emeraldReward = attempts[problemId] === 1 ? 2 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                saveProgress();
+            } else {
+                showFeedback(`Incorrect. ${attempts[problemId] > 2 ? `Answer: ${problem.answer}` : 'Try again!'}`, false);
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/14`;
+        }
+
+        function saveProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'expanding-brackets');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'expanding-brackets', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 14;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'expanding-brackets');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 60;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 7;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) nextProblem();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

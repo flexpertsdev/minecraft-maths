@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Factorising - Enchantment Tables | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Factorising</h1>
+                <p class="topic-subtitle">Enchantment Tables</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/12</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">✨</div>
+                <h2>Welcome to the Enchantment Library!</h2>
+                <p>Master the ancient art of factorising to unlock powerful enchantments. Break down expressions into their magical components!</p>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Key Concepts:</h3>
+                    <ul>
+                        <li>Find common factors</li>
+                        <li>Factor out the HCF</li>
+                        <li>Factorise quadratics</li>
+                        <li>Difference of squares</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Begin Enchanting
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Enchantment 1/12</span>
+                    <span class="problem-xp">+16 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Factorisation:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show your factorising steps..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Factorised Form:</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter the factorised expression"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Enchanting Tip (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Cast Enchantment
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">✨</div>
+                <h2>Enchantment Success!</h2>
+                <p id="successMessage">Perfect factorisation!</p>
+                <div class="xp-earned">+16 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Enchantment →
+                </button>
+            </div>
+        </div>
+
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Master Enchanter!</h2>
+                <p>You've mastered factorisation!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">0</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Factorising problems with enchantment context
+        const problems = [
+            {
+                id: 1,
+                question: "Protection enchant: Factorise 6x + 12",
+                hint: "Find the HCF of 6 and 12",
+                answer: "6(x+2)",
+                alternateAnswers: ["6(x + 2)"],
+                solution: "HCF = 6, so 6x + 12 = 6(x + 2)"
+            },
+            {
+                id: 2,
+                question: "Sharpness spell: Factorise 10y - 15",
+                hint: "What divides both 10 and 15?",
+                answer: "5(2y-3)",
+                alternateAnswers: ["5(2y - 3)"],
+                solution: "HCF = 5, so 10y - 15 = 5(2y - 3)"
+            },
+            {
+                id: 3,
+                question: "Efficiency boost: Factorise x² + 7x",
+                hint: "What's common to both terms?",
+                answer: "x(x+7)",
+                alternateAnswers: ["x(x + 7)"],
+                solution: "Common factor = x, so x² + 7x = x(x + 7)"
+            },
+            {
+                id: 4,
+                question: "Unbreaking charm: Factorise 8x² - 12x",
+                hint: "Find HCF of 8x² and 12x",
+                answer: "4x(2x-3)",
+                alternateAnswers: ["4x(2x - 3)"],
+                solution: "HCF = 4x, so 8x² - 12x = 4x(2x - 3)"
+            },
+            {
+                id: 5,
+                question: "Fortune enchant: Factorise x² + 5x + 6",
+                hint: "Find two numbers that multiply to 6 and add to 5",
+                answer: "(x+2)(x+3)",
+                alternateAnswers: ["(x + 2)(x + 3)", "(x+3)(x+2)", "(x + 3)(x + 2)"],
+                solution: "2 × 3 = 6, 2 + 3 = 5, so (x + 2)(x + 3)"
+            },
+            {
+                id: 6,
+                question: "Looting spell: Factorise x² - 5x + 4",
+                hint: "Two numbers multiply to 4, add to -5",
+                answer: "(x-1)(x-4)",
+                alternateAnswers: ["(x - 1)(x - 4)", "(x-4)(x-1)", "(x - 4)(x - 1)"],
+                solution: "-1 × -4 = 4, -1 + -4 = -5, so (x - 1)(x - 4)"
+            },
+            {
+                id: 7,
+                question: "Power enchant: Factorise x² - 9",
+                hint: "Difference of squares: a² - b²",
+                answer: "(x+3)(x-3)",
+                alternateAnswers: ["(x + 3)(x - 3)", "(x-3)(x+3)", "(x - 3)(x + 3)"],
+                solution: "x² - 9 = x² - 3² = (x + 3)(x - 3)"
+            },
+            {
+                id: 8,
+                question: "Silk Touch: Factorise 3x² + 9x",
+                hint: "Factor out the common term",
+                answer: "3x(x+3)",
+                alternateAnswers: ["3x(x + 3)"],
+                solution: "Common factor = 3x, so 3x² + 9x = 3x(x + 3)"
+            },
+            {
+                id: 9,
+                question: "Mending magic: Factorise x² + 8x + 12",
+                hint: "Find factors of 12 that add to 8",
+                answer: "(x+2)(x+6)",
+                alternateAnswers: ["(x + 2)(x + 6)", "(x+6)(x+2)", "(x + 6)(x + 2)"],
+                solution: "2 × 6 = 12, 2 + 6 = 8, so (x + 2)(x + 6)"
+            },
+            {
+                id: 10,
+                question: "Infinity bow: Factorise 4x² - 16",
+                hint: "Factor out 4 first, then difference of squares",
+                answer: "4(x+2)(x-2)",
+                alternateAnswers: ["4(x + 2)(x - 2)", "4(x-2)(x+2)", "4(x - 2)(x + 2)"],
+                solution: "4x² - 16 = 4(x² - 4) = 4(x + 2)(x - 2)"
+            },
+            {
+                id: 11,
+                question: "Thorns armor: Factorise 2x² + 10x + 12",
+                hint: "Factor out 2 first",
+                answer: "2(x+2)(x+3)",
+                alternateAnswers: ["2(x + 2)(x + 3)", "2(x+3)(x+2)", "2(x + 3)(x + 2)"],
+                solution: "2(x² + 5x + 6) = 2(x + 2)(x + 3)"
+            },
+            {
+                id: 12,
+                question: "Ultimate enchant: Factorise x² - 2x - 15",
+                hint: "Find factors of -15 that differ by -2",
+                answer: "(x-5)(x+3)",
+                alternateAnswers: ["(x - 5)(x + 3)", "(x+3)(x-5)", "(x + 3)(x - 5)"],
+                solution: "-5 × 3 = -15, -5 + 3 = -2, so (x - 5)(x + 3)"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            document.querySelector('.problem-number').textContent = `Enchantment ${currentProblem + 1}/12`;
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Enchanting Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+        }
+
+        function normalizeExpression(expr) {
+            return expr.toLowerCase()
+                .replace(/\s+/g, '')
+                .replace(/\*/g, '')
+                .replace(/\^/g, '²');
+        }
+
+        function checkAnswer() {
+            const userAnswer = normalizeExpression(document.getElementById('answerInput').value.trim());
+            const problem = problems[currentProblem];
+            
+            if (!userAnswer) {
+                showFeedback('Please enter the factorised form!', false);
+                return;
+            }
+            
+            const problemId = problem.id;
+            if (!attempts[problemId]) attempts[problemId] = 0;
+            attempts[problemId]++;
+            
+            let isCorrect = userAnswer === normalizeExpression(problem.answer);
+            
+            if (!isCorrect && problem.alternateAnswers) {
+                isCorrect = problem.alternateAnswers.some(alt => 
+                    userAnswer === normalizeExpression(alt)
+                );
+            }
+            
+            if (isCorrect) {
+                let xp = 16;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 3, 5);
+                
+                score += xp;
+                let emeraldReward = attempts[problemId] === 1 ? 3 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                saveProgress();
+            } else {
+                showFeedback(`Incorrect. ${attempts[problemId] > 2 ? `Answer: ${problem.answer}` : 'Try again!'}`, false);
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/12`;
+        }
+
+        function saveProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'factorising');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'factorising', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 16;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'factorising');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 60;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 6;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) nextProblem();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

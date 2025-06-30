@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Compound Shapes - Building Plans | Minecraft Maths</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="topic-styles.css">
+</head>
+<body>
+    <div class="topic-container">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <button class="back-btn" onclick="window.location.href='../index.html'">
+                <span>←</span>
+            </button>
+            <div class="topic-info">
+                <h1 class="topic-title">Compound Shapes</h1>
+                <p class="topic-subtitle">Building Plans</p>
+            </div>
+            <div class="topic-stats">
+                <span class="problems-count">0/12</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="topic-progress-bar">
+            <div class="progress-fill" id="topicProgress"></div>
+        </div>
+
+        <!-- Intro Section -->
+        <section class="intro-section" id="introSection">
+            <div class="intro-card">
+                <div class="intro-icon">🏗️</div>
+                <h2>Welcome to the Building Site!</h2>
+                <p>In Minecraft, epic builds require calculating areas of complex shapes. Learn to break down compound shapes into simple parts!</p>
+                
+                <div class="example-box">
+                    <h3>🎯 Building Example:</h3>
+                    <p><strong>L-shaped house floor:</strong></p>
+                    <p>Break into two rectangles: 5×3 and 4×2</p>
+                    <p>Total area = 15 + 8 = 23 blocks²</p>
+                </div>
+                
+                <div class="key-concepts">
+                    <h3>🔑 Builder's Guide:</h3>
+                    <ul>
+                        <li>Split complex shapes into rectangles/triangles</li>
+                        <li>Calculate each part separately</li>
+                        <li>Add areas together (or subtract holes)</li>
+                        <li>Always include units (blocks²)</li>
+                    </ul>
+                </div>
+                
+                <button class="start-quest-btn" onclick="startQuest()">
+                    Start Building
+                </button>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem-section" id="problemSection" style="display: none;">
+            <div class="problem-card">
+                <div class="problem-header">
+                    <span class="problem-number">Build 1/12</span>
+                    <span class="problem-xp">+15 XP</span>
+                </div>
+                
+                <div class="problem-content" id="problemContent">
+                    <!-- Problem will be inserted here -->
+                </div>
+                
+                <div class="diagram-area" id="diagramArea">
+                    <!-- Diagram will be inserted here -->
+                </div>
+                
+                <div class="work-area">
+                    <h3>Your Calculations:</h3>
+                    <textarea 
+                        id="workArea" 
+                        class="work-input" 
+                        placeholder="Show how you split the shape and calculate..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <div class="answer-area">
+                    <label for="answerInput">Total Area (blocks²):</label>
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        class="answer-input" 
+                        placeholder="Enter the area"
+                        inputmode="numeric"
+                    >
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="hint-btn" onclick="showHint()">
+                        💡 Builder's Tip (-5 XP)
+                    </button>
+                    <button class="check-btn" onclick="checkAnswer()">
+                        ✓ Check Blueprint
+                    </button>
+                </div>
+                
+                <div class="hint-box" id="hintBox" style="display: none;">
+                    <!-- Hint will be inserted here -->
+                </div>
+                
+                <div class="feedback-box" id="feedbackBox" style="display: none;">
+                    <!-- Feedback will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Modal -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success">
+                <div class="modal-icon">🏗️</div>
+                <h2>Build Complete!</h2>
+                <p id="successMessage">Perfect measurements!</p>
+                <div class="xp-earned">+15 XP</div>
+                <button class="continue-btn" onclick="nextProblem()">
+                    Next Build →
+                </button>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div class="modal" id="completionModal">
+            <div class="modal-content completion">
+                <div class="modal-icon">🏆</div>
+                <h2>Master Builder!</h2>
+                <p>You've mastered compound shape areas!</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalXP">180</span>
+                        <span class="stat-label">XP Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalEmeralds">0</span>
+                        <span class="stat-label">💚 Earned</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">🏗️12</span>
+                        <span class="stat-label">Builds Complete</span>
+                    </div>
+                </div>
+                <button class="home-btn" onclick="window.location.href='../index.html'">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Problem data with building context
+        const problems = [
+            {
+                id: 1,
+                context: "🏠 Simple House",
+                question: "Calculate the floor area of this L-shaped house:",
+                diagram: "L-shape: Main room 6×4 blocks, Extension 3×2 blocks",
+                hint: "Add the two rectangles: (6×4) + (3×2)",
+                answer: 30,
+                solution: "Main: 6×4 = 24, Extension: 3×2 = 6, Total: 24+6 = 30 blocks²"
+            },
+            {
+                id: 2,
+                context: "🏛️ Castle Wall",
+                question: "Find the area of this castle wall with a gate:",
+                diagram: "Wall: 10×8 blocks, Gate opening: 3×5 blocks",
+                hint: "Subtract the gate from the total wall area",
+                answer: 65,
+                solution: "Wall: 10×8 = 80, Gate: 3×5 = 15, Area: 80-15 = 65 blocks²"
+            },
+            {
+                id: 3,
+                context: "🌾 Farm Plot",
+                question: "Calculate this T-shaped farm area:",
+                diagram: "Top strip: 8×3 blocks, Vertical strip: 2×6 blocks",
+                hint: "Add the horizontal and vertical rectangles",
+                answer: 36,
+                solution: "Top: 8×3 = 24, Vertical: 2×6 = 12, Total: 24+12 = 36 blocks²"
+            },
+            {
+                id: 4,
+                context: "🏊 Pool Design",
+                question: "Find the area of this pool with steps:",
+                diagram: "Main pool: 7×5 blocks, Steps cut out: 2×2 blocks",
+                hint: "Subtract the step area from the main pool",
+                answer: 31,
+                solution: "Pool: 7×5 = 35, Steps: 2×2 = 4, Area: 35-4 = 31 blocks²"
+            },
+            {
+                id: 5,
+                context: "🏰 Tower Base",
+                question: "Calculate this cross-shaped tower base:",
+                diagram: "Center: 4×4 blocks, Each arm: 2×3 blocks (4 arms)",
+                hint: "Center square plus 4 rectangular arms",
+                answer: 40,
+                solution: "Center: 4×4 = 16, Arms: 4×(2×3) = 24, Total: 16+24 = 40 blocks²"
+            },
+            {
+                id: 6,
+                context: "🎪 Market Stall",
+                question: "Find the floor area of this U-shaped stall:",
+                diagram: "Full rectangle: 8×6 blocks, Missing center: 4×3 blocks",
+                hint: "Large rectangle minus the missing middle",
+                answer: 36,
+                solution: "Full: 8×6 = 48, Missing: 4×3 = 12, Area: 48-12 = 36 blocks²"
+            },
+            {
+                id: 7,
+                context: "⛲ Fountain Plaza",
+                question: "Calculate this square plaza with corner gardens:",
+                diagram: "Plaza: 10×10 blocks, Each corner garden: 2×2 blocks (4 corners)",
+                hint: "Square minus 4 corner squares",
+                answer: 84,
+                solution: "Plaza: 10×10 = 100, Gardens: 4×(2×2) = 16, Area: 100-16 = 84 blocks²"
+            },
+            {
+                id: 8,
+                context: "🛤️ Railway Station",
+                question: "Find the platform area (two rectangles connected):",
+                diagram: "Main platform: 12×4 blocks, Waiting area: 5×5 blocks",
+                hint: "Add both rectangular sections",
+                answer: 73,
+                solution: "Platform: 12×4 = 48, Waiting: 5×5 = 25, Total: 48+25 = 73 blocks²"
+            },
+            {
+                id: 9,
+                context: "🏟️ Arena Floor",
+                question: "Calculate this octagonal arena (approximate as rectangles):",
+                diagram: "Center: 8×8 blocks, Corner cuts: 2×2 blocks each (4 corners)",
+                hint: "Large square minus corner triangles (treat as squares)",
+                answer: 48,
+                solution: "Square: 8×8 = 64, Corners: 4×(2×2) = 16, Area: 64-16 = 48 blocks²"
+            },
+            {
+                id: 10,
+                context: "🌉 Bridge Design",
+                question: "Find the walkway area of this H-shaped bridge:",
+                diagram: "Two sides: 3×10 blocks each, Center: 8×3 blocks",
+                hint: "Two vertical strips plus horizontal connector",
+                answer: 84,
+                solution: "Sides: 2×(3×10) = 60, Center: 8×3 = 24, Total: 60+24 = 84 blocks²"
+            },
+            {
+                id: 11,
+                context: "🏛️ Temple Floor",
+                question: "Calculate this complex temple layout:",
+                diagram: "Main hall: 9×7 blocks, Side chambers: 3×4 blocks each (2 chambers)",
+                hint: "Main rectangle plus two side rectangles",
+                answer: 87,
+                solution: "Main: 9×7 = 63, Chambers: 2×(3×4) = 24, Total: 63+24 = 87 blocks²"
+            },
+            {
+                id: 12,
+                context: "🎮 Pixel Art",
+                question: "Find the area of this creeper face design:",
+                diagram: "Head: 8×8 blocks, Eyes removed: 2×2 blocks each (2 eyes), Mouth: 4×2 blocks removed",
+                hint: "Full square minus eyes and mouth",
+                answer: 48,
+                solution: "Head: 8×8 = 64, Eyes: 2×(2×2) = 8, Mouth: 4×2 = 8, Area: 64-8-8 = 48 blocks²"
+            }
+        ];
+
+        // Game state
+        let currentProblem = 0;
+        let score = 0;
+        let emeraldsEarned = 0;
+        let hintsUsed = 0;
+        let attempts = {};
+
+        // Initialize
+        function startQuest() {
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('problemSection').style.display = 'block';
+            showProblem();
+        }
+
+        function showProblem() {
+            const problem = problems[currentProblem];
+            
+            document.querySelector('.problem-number').textContent = `Build ${currentProblem + 1}/12`;
+            
+            document.getElementById('problemContent').innerHTML = `
+                <div class="problem-context">${problem.context}</div>
+                <div class="problem-question">${problem.question}</div>
+            `;
+            
+            document.getElementById('diagramArea').innerHTML = `
+                <div class="diagram-box">
+                    <p><strong>📐 Dimensions:</strong></p>
+                    <p>${problem.diagram}</p>
+                </div>
+            `;
+            
+            // Reset UI
+            document.getElementById('workArea').value = '';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.querySelector('.hint-btn').disabled = false;
+            
+            updateProgress();
+        }
+
+        function showHint() {
+            const problem = problems[currentProblem];
+            document.getElementById('hintBox').innerHTML = `
+                <p><strong>💡 Builder's Tip:</strong> ${problem.hint}</p>
+            `;
+            document.getElementById('hintBox').style.display = 'block';
+            hintsUsed++;
+            document.querySelector('.hint-btn').disabled = true;
+            
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            const problem = problems[currentProblem];
+            const problemId = problem.id;
+            
+            if (!userAnswer) {
+                showFeedback('Please enter an area!', false);
+                return;
+            }
+            
+            if (!attempts[problemId]) {
+                attempts[problemId] = 0;
+            }
+            attempts[problemId]++;
+            
+            const isCorrect = parseFloat(userAnswer) === problem.answer;
+            
+            if (isCorrect) {
+                let xp = 15;
+                if (document.querySelector('.hint-btn').disabled) xp -= 5;
+                if (attempts[problemId] > 1) xp = Math.max(xp - 3, 5);
+                
+                score += xp;
+                
+                // Award emeralds
+                let emeraldReward = attempts[problemId] === 1 ? 2 : 1;
+                emeraldsEarned += emeraldReward;
+                awardEmeralds(emeraldReward);
+                
+                document.getElementById('successMessage').textContent = 
+                    attempts[problemId] === 1 ? 'Perfect blueprint!' : 'Build approved!';
+                document.querySelector('.xp-earned').textContent = `+${xp} XP & ${emeraldReward}💚`;
+                document.getElementById('successModal').classList.add('show');
+                
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+                
+                saveProgress();
+            } else {
+                showFeedback(`Incorrect area. ${attempts[problemId] > 2 ? `The answer is ${problem.answer} blocks²` : 'Check your calculations!'}`, false);
+                
+                if (attempts[problemId] > 2) {
+                    document.getElementById('feedbackBox').innerHTML += `
+                        <div class="solution-box">
+                            <strong>Solution:</strong> ${problem.solution}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isSuccess ? 'success' : 'error'}`;
+            feedbackBox.innerHTML = `<p>${message}</p>`;
+            feedbackBox.style.display = 'block';
+            
+            if ('vibrate' in navigator && !isSuccess) {
+                navigator.vibrate(200);
+            }
+        }
+
+        function nextProblem() {
+            document.getElementById('successModal').classList.remove('show');
+            currentProblem++;
+            
+            if (currentProblem >= problems.length) {
+                showCompletion();
+            } else {
+                showProblem();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('totalXP').textContent = score;
+            document.getElementById('totalEmeralds').textContent = emeraldsEarned;
+            document.getElementById('completionModal').classList.add('show');
+            updateMainProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblem / problems.length) * 100;
+            document.getElementById('topicProgress').style.width = progress + '%';
+            document.querySelector('.problems-count').textContent = `${currentProblem}/12`;
+        }
+
+        function saveProgress() {
+            const progress = {
+                topicId: 'compound-shapes',
+                completed: currentProblem,
+                score: score,
+                hintsUsed: hintsUsed,
+                timestamp: Date.now()
+            };
+            
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            if (!allProgress.topics) allProgress.topics = [];
+            
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'compound-shapes');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = currentProblem;
+            } else {
+                allProgress.topics.push({ id: 'compound-shapes', completed: currentProblem });
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 15;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function updateMainProgress() {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            
+            if (!allProgress.topics) allProgress.topics = [];
+            const topicIndex = allProgress.topics.findIndex(t => t.id === 'compound-shapes');
+            if (topicIndex >= 0) {
+                allProgress.topics[topicIndex].completed = problems.length;
+            }
+            
+            allProgress.xp = (allProgress.xp || 0) + 50;
+            allProgress.emeralds = (allProgress.emeralds || 0) + 6;
+            
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        function awardEmeralds(amount) {
+            let allProgress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            allProgress.emeralds = (allProgress.emeralds || 0) + amount;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(allProgress));
+        }
+
+        // Event listeners
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                nextProblem();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('answerInput')) {
+                checkAnswer();
+            }
+        });
+    </script>
+
+    <style>
+        .diagram-area {
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .diagram-box {
+            background: var(--bg-card);
+            border: 2px dashed var(--mc-diamond);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            text-align: center;
+        }
+        
+        .diagram-box p {
+            margin: var(--spacing-sm) 0;
+            line-height: 1.6;
+        }
+    </style>
+</body>
+</html>
