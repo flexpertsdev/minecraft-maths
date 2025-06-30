@@ -143,10 +143,6 @@
                 <span class="nav-icon">🏠</span>
                 <span class="nav-label">Home</span>
             </button>
-            <button class="nav-item" data-page="achievements">
-                <span class="nav-icon">🏅</span>
-                <span class="nav-label">Awards</span>
-            </button>
             <button class="nav-item" onclick="window.location.href='shop.html'">
                 <span class="nav-icon">🏪</span>
                 <span class="nav-label">Shop</span>
@@ -158,10 +154,6 @@
             <button class="nav-item" onclick="window.location.href='casino.html'">
                 <span class="nav-icon">🎰</span>
                 <span class="nav-label">Casino</span>
-            </button>
-            <button class="nav-item" data-page="settings">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-label">Settings</span>
             </button>
         </nav>
     </div>
@@ -503,9 +495,7 @@
                     
                     // Handle navigation
                     const page = this.dataset.page;
-                    if (page === 'achievements') {
-                        showAchievements();
-                    } else if (page === 'shop') {
+                    if (page === 'shop') {
                         window.location.href = 'shop.html';
                     }
                 });
@@ -571,10 +561,6 @@
             }
         }
 
-        function showAchievements() {
-            // This would show an achievements page
-            alert('Achievements page coming soon!');
-        }
 
         // Shop system removed - see shop.html for dedicated shop page
         /*
