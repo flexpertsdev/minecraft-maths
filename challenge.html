@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Speed Challenge - Minecraft Maths</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .challenge-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+            min-height: 100vh;
+        }
+        
+        .challenge-header {
+            background: linear-gradient(135deg, var(--mc-gold), #ff9500);
+            color: white;
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .timer-display {
+            font-size: 3em;
+            font-weight: bold;
+            font-family: monospace;
+            margin: var(--spacing-lg) 0;
+            color: var(--mc-emerald);
+        }
+        
+        .challenge-intro {
+            background: var(--bg-card);
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .challenge-rules {
+            background: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            margin: var(--spacing-lg) 0;
+            text-align: left;
+        }
+        
+        .challenge-rules h3 {
+            color: var(--mc-gold);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .challenge-rules li {
+            margin: var(--spacing-sm) 0;
+        }
+        
+        .start-challenge-btn {
+            background: var(--mc-emerald);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: var(--spacing-lg) auto;
+            display: block;
+        }
+        
+        .start-challenge-btn:hover {
+            transform: scale(1.05);
+            background: var(--mc-dark-emerald);
+        }
+        
+        .challenge-problem {
+            background: var(--bg-card);
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            text-align: center;
+            min-height: 400px;
+            display: none;
+        }
+        
+        .problem-counter {
+            background: var(--mc-stone);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .problem-question {
+            font-size: 1.5em;
+            margin: var(--spacing-xl) 0;
+            line-height: 1.6;
+        }
+        
+        .quick-answer-input {
+            font-size: 1.5em;
+            padding: 16px;
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            margin: var(--spacing-lg) auto;
+            display: block;
+        }
+        
+        .quick-answer-input:focus {
+            border-color: var(--mc-emerald);
+            outline: none;
+        }
+        
+        .submit-answer-btn {
+            background: var(--mc-diamond);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: var(--spacing-md);
+        }
+        
+        .results-screen {
+            background: var(--bg-card);
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+        }
+        
+        .final-time {
+            font-size: 4em;
+            font-weight: bold;
+            color: var(--mc-gold);
+            margin: var(--spacing-lg) 0;
+            font-family: monospace;
+        }
+        
+        .leaderboard {
+            background: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            margin: var(--spacing-xl) 0;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .leaderboard-title {
+            color: var(--mc-gold);
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+        }
+        
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .rank {
+            font-weight: bold;
+            font-size: 1.2em;
+            width: 40px;
+        }
+        
+        .rank-1 { color: var(--mc-gold); }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
+        
+        .player-name {
+            flex: 1;
+            margin: 0 var(--spacing-md);
+        }
+        
+        .player-time {
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--mc-emerald);
+        }
+        
+        .share-code {
+            background: var(--bg-secondary);
+            padding: var(--spacing-md);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.2em;
+            margin: var(--spacing-md) 0;
+            word-break: break-all;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            background: var(--mc-emerald);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn {
+            background: var(--mc-stone);
+        }
+        
+        .wrong-flash {
+            animation: wrong-flash 0.5s;
+        }
+        
+        @keyframes wrong-flash {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(255, 0, 0, 0.3); }
+        }
+        
+        .correct-flash {
+            animation: correct-flash 0.5s;
+        }
+        
+        @keyframes correct-flash {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(0, 255, 0, 0.3); }
+        }
+    </style>
+</head>
+<body>
+    <div class="challenge-container">
+        <div class="challenge-header">
+            <h1>⚡ Speed Challenge</h1>
+            <div class="timer-display" id="timer">00:00.00</div>
+        </div>
+        
+        <!-- Start Screen -->
+        <div class="challenge-intro" id="introScreen">
+            <h2>Test Your Speed!</h2>
+            <p>Answer 5 random math questions as fast as possible!</p>
+            
+            <div class="challenge-rules">
+                <h3>📋 Rules:</h3>
+                <ul>
+                    <li>5 random questions from different topics</li>
+                    <li>Timer starts when you click Start</li>
+                    <li>Wrong answers add 5 seconds penalty</li>
+                    <li>Beat your best time or challenge friends!</li>
+                    <li>Top 3 times earn bonus emeralds!</li>
+                </ul>
+            </div>
+            
+            <button class="start-challenge-btn" onclick="startChallenge()">
+                Start Challenge!
+            </button>
+        </div>
+        
+        <!-- Problem Screen -->
+        <div class="challenge-problem" id="problemScreen">
+            <span class="problem-counter" id="problemCounter">1 / 5</span>
+            <div class="problem-question" id="problemQuestion"></div>
+            <input type="text" 
+                   class="quick-answer-input" 
+                   id="answerInput" 
+                   placeholder="Your answer"
+                   autocomplete="off"
+                   inputmode="numeric">
+            <button class="submit-answer-btn" onclick="checkAnswer()">Submit</button>
+        </div>
+        
+        <!-- Results Screen -->
+        <div class="results-screen" id="resultsScreen">
+            <h2>🏆 Challenge Complete!</h2>
+            <div class="final-time" id="finalTime">00:00.00</div>
+            <p id="resultMessage"></p>
+            
+            <div class="leaderboard">
+                <h3 class="leaderboard-title">🏅 Best Times</h3>
+                <div id="leaderboardContent"></div>
+            </div>
+            
+            <div class="share-section">
+                <h3>Share Challenge Code:</h3>
+                <div class="share-code" id="shareCode"></div>
+                <p>Send this code to friends to challenge them!</p>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn" onclick="startChallenge()">Try Again</button>
+                <a href="index.html" class="action-btn back-btn">Back to Home</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Challenge state
+        let challengeState = {
+            isRunning: false,
+            startTime: null,
+            currentProblem: 0,
+            problems: [],
+            penalties: 0,
+            correctAnswers: 0
+        };
+        
+        // Timer interval
+        let timerInterval = null;
+        
+        // Problem bank (simplified versions for speed)
+        const problemBank = [
+            // Substitution
+            { question: "If x = 5, calculate 2x + 3", answer: "13", topic: "substitution" },
+            { question: "If y = 4, find 3y - 5", answer: "7", topic: "substitution" },
+            { question: "If a = 6, what is a² - 10", answer: "26", topic: "substitution" },
+            
+            // Basic equations
+            { question: "Solve: x + 8 = 15", answer: "7", topic: "equations" },
+            { question: "Solve: 2x = 18", answer: "9", topic: "equations" },
+            { question: "Solve: x - 6 = 11", answer: "17", topic: "equations" },
+            
+            // Word problems
+            { question: "5 apples cost 15 emeralds. Cost per apple?", answer: "3", topic: "word" },
+            { question: "Steve has 24 blocks, gives away 1/3. How many left?", answer: "16", topic: "word" },
+            
+            // Ratios
+            { question: "Simplify ratio 12:18", answer: "2:3", alternates: ["2:3", "2 : 3"], topic: "ratios" },
+            { question: "Simplify ratio 15:25", answer: "3:5", alternates: ["3:5", "3 : 5"], topic: "ratios" },
+            
+            // Area/shapes
+            { question: "Area of rectangle 7×4 blocks", answer: "28", topic: "shapes" },
+            { question: "Area of square with side 9 blocks", answer: "81", topic: "shapes" },
+            
+            // Percentages
+            { question: "50% of 80", answer: "40", topic: "percent" },
+            { question: "25% of 60", answer: "15", topic: "percent" },
+            { question: "10% of 150", answer: "15", topic: "percent" },
+            
+            // Basic arithmetic
+            { question: "15 × 4", answer: "60", topic: "arithmetic" },
+            { question: "144 ÷ 12", answer: "12", topic: "arithmetic" },
+            { question: "7² + 1", answer: "50", topic: "arithmetic" },
+            
+            // Factorizing
+            { question: "Highest common factor of 12 and 18", answer: "6", topic: "factors" },
+            { question: "Factors of 20 (smallest to largest)", answer: "1,2,4,5,10,20", alternates: ["1, 2, 4, 5, 10, 20"], topic: "factors" }
+        ];
+        
+        // Get random problems
+        function getRandomProblems(count) {
+            const shuffled = [...problemBank].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+        
+        // Start challenge
+        function startChallenge() {
+            challengeState = {
+                isRunning: true,
+                startTime: Date.now(),
+                currentProblem: 0,
+                problems: getRandomProblems(5),
+                penalties: 0,
+                correctAnswers: 0
+            };
+            
+            document.getElementById('introScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('problemScreen').style.display = 'block';
+            
+            showCurrentProblem();
+            startTimer();
+        }
+        
+        // Show current problem
+        function showCurrentProblem() {
+            const problem = challengeState.problems[challengeState.currentProblem];
+            document.getElementById('problemCounter').textContent = 
+                `${challengeState.currentProblem + 1} / 5`;
+            document.getElementById('problemQuestion').textContent = problem.question;
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').focus();
+        }
+        
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(updateTimer, 10);
+        }
+        
+        // Update timer display
+        function updateTimer() {
+            if (!challengeState.isRunning) return;
+            
+            const elapsed = Date.now() - challengeState.startTime + (challengeState.penalties * 5000);
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            const centiseconds = Math.floor((elapsed % 1000) / 10);
+            
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Check answer
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+            const problem = challengeState.problems[challengeState.currentProblem];
+            const correctAnswer = problem.answer.toLowerCase();
+            const alternates = problem.alternates?.map(a => a.toLowerCase()) || [];
+            
+            let isCorrect = userAnswer === correctAnswer || alternates.includes(userAnswer);
+            
+            const problemScreen = document.getElementById('problemScreen');
+            
+            if (isCorrect) {
+                challengeState.correctAnswers++;
+                problemScreen.classList.add('correct-flash');
+                setTimeout(() => problemScreen.classList.remove('correct-flash'), 500);
+                
+                // Move to next problem
+                challengeState.currentProblem++;
+                
+                if (challengeState.currentProblem >= 5) {
+                    endChallenge();
+                } else {
+                    setTimeout(showCurrentProblem, 300);
+                }
+            } else {
+                challengeState.penalties++;
+                problemScreen.classList.add('wrong-flash');
+                setTimeout(() => problemScreen.classList.remove('wrong-flash'), 500);
+                
+                // Vibrate on wrong answer
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(200);
+                }
+                
+                // Clear input for retry
+                document.getElementById('answerInput').value = '';
+                document.getElementById('answerInput').focus();
+            }
+        }
+        
+        // End challenge
+        function endChallenge() {
+            challengeState.isRunning = false;
+            clearInterval(timerInterval);
+            
+            const totalTime = Date.now() - challengeState.startTime + (challengeState.penalties * 5000);
+            const minutes = Math.floor(totalTime / 60000);
+            const seconds = Math.floor((totalTime % 60000) / 1000);
+            const centiseconds = Math.floor((totalTime % 1000) / 10);
+            
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}`;
+            
+            // Save to leaderboard
+            saveToLeaderboard(timeString, totalTime);
+            
+            // Show results
+            document.getElementById('problemScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            document.getElementById('finalTime').textContent = timeString;
+            
+            // Generate share code
+            const shareCode = btoa(JSON.stringify({
+                time: totalTime,
+                timeString: timeString,
+                date: Date.now(),
+                penalties: challengeState.penalties
+            }));
+            document.getElementById('shareCode').textContent = shareCode.substring(0, 8).toUpperCase();
+            
+            // Result message
+            let message = `You answered ${challengeState.correctAnswers}/5 correctly`;
+            if (challengeState.penalties > 0) {
+                message += ` with ${challengeState.penalties} penalties (+${challengeState.penalties * 5}s)`;
+            }
+            document.getElementById('resultMessage').textContent = message;
+            
+            // Award emeralds for top 3 times
+            awardEmeralds(totalTime);
+            
+            // Update leaderboard display
+            updateLeaderboardDisplay();
+        }
+        
+        // Save to leaderboard
+        function saveToLeaderboard(timeString, timeMs) {
+            let leaderboard = JSON.parse(localStorage.getItem('challengeLeaderboard') || '[]');
+            
+            leaderboard.push({
+                time: timeMs,
+                timeString: timeString,
+                date: Date.now(),
+                name: 'You'
+            });
+            
+            // Sort by time and keep top 10
+            leaderboard.sort((a, b) => a.time - b.time);
+            leaderboard = leaderboard.slice(0, 10);
+            
+            localStorage.setItem('challengeLeaderboard', JSON.stringify(leaderboard));
+        }
+        
+        // Update leaderboard display
+        function updateLeaderboardDisplay() {
+            const leaderboard = JSON.parse(localStorage.getItem('challengeLeaderboard') || '[]');
+            const content = document.getElementById('leaderboardContent');
+            
+            if (leaderboard.length === 0) {
+                content.innerHTML = '<p>No times recorded yet!</p>';
+                return;
+            }
+            
+            content.innerHTML = leaderboard.map((entry, index) => `
+                <div class="leaderboard-entry">
+                    <span class="rank rank-${index + 1}">#${index + 1}</span>
+                    <span class="player-name">${entry.name}</span>
+                    <span class="player-time">${entry.timeString}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Award emeralds for performance
+        function awardEmeralds(timeMs) {
+            const leaderboard = JSON.parse(localStorage.getItem('challengeLeaderboard') || '[]');
+            const position = leaderboard.findIndex(entry => entry.time === timeMs) + 1;
+            
+            let emeraldReward = 0;
+            if (position === 1) emeraldReward = 20;
+            else if (position === 2) emeraldReward = 15;
+            else if (position === 3) emeraldReward = 10;
+            else if (challengeState.correctAnswers === 5) emeraldReward = 5;
+            
+            if (emeraldReward > 0) {
+                let progress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+                progress.emeralds = (progress.emeralds || 0) + emeraldReward;
+                localStorage.setItem('minecraftMathsProgress', JSON.stringify(progress));
+            }
+        }
+        
+        // Enter key to submit
+        document.getElementById('answerInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+        
+        // Load leaderboard on start
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLeaderboardDisplay();
+        });
+    </script>
+</body>
+</html>

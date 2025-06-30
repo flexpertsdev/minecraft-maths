@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Emerald Shop - Minecraft Maths</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .shop-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+            padding-bottom: 100px;
+        }
+        
+        .shop-header {
+            background: linear-gradient(135deg, var(--mc-emerald), var(--mc-dark-emerald));
+            color: white;
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shop-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.1) 10px,
+                rgba(255,255,255,0.1) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+        
+        @keyframes slide {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .emerald-balance {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: var(--spacing-md);
+        }
+        
+        .emerald-icon {
+            font-size: 1.2em;
+        }
+        
+        .shop-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+            overflow-x: auto;
+            padding-bottom: var(--spacing-sm);
+        }
+        
+        .shop-tab {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        
+        .shop-tab.active {
+            background: var(--mc-emerald);
+            color: white;
+            border-color: var(--mc-emerald);
+        }
+        
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .shop-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shop-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-color: var(--mc-emerald);
+        }
+        
+        .shop-item.owned {
+            border-color: var(--mc-gold);
+            background: linear-gradient(135deg, var(--bg-card), rgba(255,215,0,0.1));
+        }
+        
+        .shop-item.equipped {
+            border-color: var(--mc-diamond);
+            background: linear-gradient(135deg, var(--bg-card), rgba(91,192,235,0.1));
+        }
+        
+        .owned-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--mc-gold);
+            color: var(--mc-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .equipped-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--mc-diamond);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .item-preview {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto var(--spacing-md);
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            position: relative;
+        }
+        
+        .character-preview {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .steve-base {
+            width: 80px;
+            height: 100px;
+            margin: 10px auto;
+            position: relative;
+            image-rendering: pixelated;
+        }
+        
+        .steve-head {
+            width: 32px;
+            height: 32px;
+            background: #f4c889;
+            margin: 0 auto 4px;
+            position: relative;
+            border: 2px solid #8b5a3c;
+        }
+        
+        .steve-body {
+            width: 32px;
+            height: 48px;
+            background: #00aaaa;
+            margin: 0 auto 4px;
+            position: relative;
+            border: 2px solid #008888;
+        }
+        
+        .steve-legs {
+            width: 32px;
+            height: 16px;
+            background: #3e3e8a;
+            margin: 0 auto;
+            position: relative;
+            border: 2px solid #2e2e6a;
+        }
+        
+        .item-hat {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .item-description {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .item-price {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--mc-emerald);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .buy-btn, .equip-btn {
+            background: var(--mc-emerald);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .buy-btn:hover:not(:disabled) {
+            background: var(--mc-dark-emerald);
+            transform: scale(1.05);
+        }
+        
+        .buy-btn:disabled {
+            background: var(--mc-gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .equip-btn {
+            background: var(--mc-diamond);
+        }
+        
+        .equip-btn:hover {
+            background: var(--mc-dark-diamond);
+        }
+        
+        .back-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--mc-stone);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+        
+        .collection-progress {
+            background: var(--bg-secondary);
+            padding: var(--spacing-md);
+            border-radius: 8px;
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--mc-emerald), var(--mc-diamond));
+            transition: width 0.5s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .shop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            
+            .shop-item {
+                padding: var(--spacing-md);
+            }
+            
+            .item-preview {
+                width: 80px;
+                height: 80px;
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shop-container">
+        <div class="shop-header">
+            <h1>🛍️ Emerald Shop</h1>
+            <p>Customize Steve & Collect Items!</p>
+            <div class="emerald-balance">
+                <span class="emerald-icon">💚</span>
+                <span id="emeraldCount">0</span>
+                <span>Emeralds</span>
+            </div>
+        </div>
+        
+        <div class="shop-tabs">
+            <button class="shop-tab active" data-category="skins">🎨 Skins</button>
+            <button class="shop-tab" data-category="hats">🎩 Hats</button>
+            <button class="shop-tab" data-category="pets">🐺 Pets</button>
+            <button class="shop-tab" data-category="blocks">🧱 Blocks</button>
+            <button class="shop-tab" data-category="themes">🌈 Themes</button>
+            <button class="shop-tab" data-category="powerups">⚡ Power-ups</button>
+        </div>
+        
+        <div class="collection-progress" id="collectionProgress">
+            <h3>Collection Progress</h3>
+            <p><span id="collectedCount">0</span> / <span id="totalItems">0</span> items collected</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <div class="shop-grid" id="shopGrid">
+            <!-- Items will be dynamically loaded here -->
+        </div>
+    </div>
+    
+    <a href="index.html" class="back-nav">🏠 Back to Home</a>
+    
+    <script>
+        // Shop inventory
+        const shopItems = {
+            skins: [
+                {
+                    id: 'steve-classic',
+                    name: 'Classic Steve',
+                    description: 'The original look',
+                    price: 0,
+                    icon: '👤',
+                    owned: true,
+                    equipped: true
+                },
+                {
+                    id: 'steve-armor',
+                    name: 'Diamond Armor Steve',
+                    description: 'Full diamond protection',
+                    price: 100,
+                    icon: '🛡️',
+                    preview: { body: '#5bc0eb', border: '#4a9ec9' }
+                },
+                {
+                    id: 'steve-ender',
+                    name: 'Enderman Steve',
+                    description: 'Embrace the End',
+                    price: 150,
+                    icon: '🌌',
+                    preview: { body: '#2a0845', head: '#1a0529', border: '#000' }
+                },
+                {
+                    id: 'steve-creeper',
+                    name: 'Creeper Suit',
+                    description: 'Ssssssss...',
+                    price: 200,
+                    icon: '💚',
+                    preview: { body: '#00ff00', head: '#00cc00', border: '#008800' }
+                },
+                {
+                    id: 'steve-nether',
+                    name: 'Nether Explorer',
+                    description: 'Lava-proof style',
+                    price: 175,
+                    icon: '🔥',
+                    preview: { body: '#ff4444', head: '#cc0000', border: '#880000' }
+                }
+            ],
+            hats: [
+                {
+                    id: 'hat-crown',
+                    name: 'Golden Crown',
+                    description: 'Rule the realm',
+                    price: 75,
+                    icon: '👑',
+                    wearable: true
+                },
+                {
+                    id: 'hat-wizard',
+                    name: 'Wizard Hat',
+                    description: 'Magical wisdom',
+                    price: 50,
+                    icon: '🧙',
+                    wearable: true
+                },
+                {
+                    id: 'hat-pirate',
+                    name: 'Pirate Hat',
+                    description: 'Ahoy matey!',
+                    price: 60,
+                    icon: '🏴‍☠️',
+                    wearable: true
+                },
+                {
+                    id: 'hat-santa',
+                    name: 'Santa Hat',
+                    description: 'Ho ho ho!',
+                    price: 40,
+                    icon: '🎅',
+                    wearable: true
+                }
+            ],
+            pets: [
+                {
+                    id: 'pet-wolf',
+                    name: 'Tamed Wolf',
+                    description: 'Loyal companion',
+                    price: 80,
+                    icon: '🐺'
+                },
+                {
+                    id: 'pet-cat',
+                    name: 'Ocelot',
+                    description: 'Keeps creepers away',
+                    price: 70,
+                    icon: '🐱'
+                },
+                {
+                    id: 'pet-parrot',
+                    name: 'Parrot',
+                    description: 'Dances to music',
+                    price: 60,
+                    icon: '🦜'
+                },
+                {
+                    id: 'pet-fox',
+                    name: 'Fox Friend',
+                    description: 'Clever companion',
+                    price: 90,
+                    icon: '🦊'
+                },
+                {
+                    id: 'pet-bee',
+                    name: 'Buzzy Bee',
+                    description: 'Sweet helper',
+                    price: 50,
+                    icon: '🐝'
+                }
+            ],
+            blocks: [
+                {
+                    id: 'block-diamond',
+                    name: 'Diamond Block',
+                    description: 'Shiny collection',
+                    price: 100,
+                    icon: '💎'
+                },
+                {
+                    id: 'block-emerald',
+                    name: 'Emerald Block',
+                    description: 'Ultimate wealth',
+                    price: 150,
+                    icon: '💚'
+                },
+                {
+                    id: 'block-beacon',
+                    name: 'Beacon',
+                    description: 'Powerful effects',
+                    price: 200,
+                    icon: '🏛️'
+                },
+                {
+                    id: 'block-cake',
+                    name: 'Cake',
+                    description: 'Delicious treat',
+                    price: 30,
+                    icon: '🎂'
+                }
+            ],
+            themes: [
+                {
+                    id: 'theme-dark',
+                    name: 'Dark Mode',
+                    description: 'Easy on the eyes',
+                    price: 25,
+                    icon: '🌙'
+                },
+                {
+                    id: 'theme-ocean',
+                    name: 'Ocean Theme',
+                    description: 'Underwater vibes',
+                    price: 35,
+                    icon: '🌊'
+                },
+                {
+                    id: 'theme-nether',
+                    name: 'Nether Theme',
+                    description: 'Fiery interface',
+                    price: 40,
+                    icon: '🔥'
+                },
+                {
+                    id: 'theme-end',
+                    name: 'End Theme',
+                    description: 'Mysterious purple',
+                    price: 50,
+                    icon: '🌌'
+                }
+            ],
+            powerups: [
+                {
+                    id: 'powerup-2x',
+                    name: 'Double XP (30 min)',
+                    description: 'Earn XP faster',
+                    price: 50,
+                    icon: '⚡',
+                    consumable: true
+                },
+                {
+                    id: 'powerup-hints',
+                    name: '5 Hint Pack',
+                    description: 'Free hints',
+                    price: 30,
+                    icon: '💡',
+                    consumable: true
+                },
+                {
+                    id: 'powerup-skip',
+                    name: 'Problem Skip',
+                    description: 'Skip difficult problems',
+                    price: 40,
+                    icon: '⏭️',
+                    consumable: true
+                },
+                {
+                    id: 'powerup-shield',
+                    name: 'Mistake Shield',
+                    description: 'No penalty for wrong answers',
+                    price: 60,
+                    icon: '🛡️',
+                    consumable: true
+                }
+            ]
+        };
+        
+        let playerData = {
+            emeralds: 0,
+            ownedItems: ['steve-classic'],
+            equippedItems: {
+                skin: 'steve-classic',
+                hat: null,
+                pet: null,
+                theme: null
+            }
+        };
+        
+        // Load player data
+        function loadPlayerData() {
+            const saved = localStorage.getItem('minecraftMathsProgress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                playerData.emeralds = progress.emeralds || 0;
+                
+                const shopData = localStorage.getItem('shopData');
+                if (shopData) {
+                    const parsed = JSON.parse(shopData);
+                    playerData.ownedItems = parsed.ownedItems || ['steve-classic'];
+                    playerData.equippedItems = parsed.equippedItems || {
+                        skin: 'steve-classic',
+                        hat: null,
+                        pet: null,
+                        theme: null
+                    };
+                }
+            }
+            
+            updateUI();
+        }
+        
+        // Save player data
+        function savePlayerData() {
+            localStorage.setItem('shopData', JSON.stringify({
+                ownedItems: playerData.ownedItems,
+                equippedItems: playerData.equippedItems
+            }));
+            
+            // Update emeralds in main progress
+            let progress = JSON.parse(localStorage.getItem('minecraftMathsProgress') || '{}');
+            progress.emeralds = playerData.emeralds;
+            localStorage.setItem('minecraftMathsProgress', JSON.stringify(progress));
+        }
+        
+        // Update UI
+        function updateUI() {
+            document.getElementById('emeraldCount').textContent = playerData.emeralds;
+            updateCollectionProgress();
+        }
+        
+        // Update collection progress
+        function updateCollectionProgress() {
+            const totalItems = Object.values(shopItems).flat().length;
+            const collectedCount = playerData.ownedItems.length;
+            const progress = (collectedCount / totalItems) * 100;
+            
+            document.getElementById('collectedCount').textContent = collectedCount;
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+        
+        // Render shop items
+        function renderItems(category) {
+            const grid = document.getElementById('shopGrid');
+            const items = shopItems[category] || [];
+            
+            grid.innerHTML = items.map(item => {
+                const owned = playerData.ownedItems.includes(item.id);
+                const equipped = Object.values(playerData.equippedItems).includes(item.id);
+                
+                return `
+                    <div class="shop-item ${owned ? 'owned' : ''} ${equipped ? 'equipped' : ''}" 
+                         onclick="handleItemClick('${item.id}', '${category}')">
+                        ${equipped ? '<span class="equipped-badge">EQUIPPED</span>' : 
+                          owned ? '<span class="owned-badge">OWNED</span>' : ''}
+                        
+                        <div class="item-preview">
+                            ${category === 'skins' && item.preview ? renderSteve(item.preview) : 
+                              category === 'hats' && equipped ? renderSteveWithHat(item.icon) :
+                              `<span>${item.icon}</span>`}
+                        </div>
+                        
+                        <h3 class="item-name">${item.name}</h3>
+                        <p class="item-description">${item.description}</p>
+                        
+                        ${!owned ? `
+                            <div class="item-price">
+                                <span>💚</span>
+                                <span>${item.price}</span>
+                            </div>
+                            <button class="buy-btn" ${playerData.emeralds < item.price ? 'disabled' : ''}>
+                                ${playerData.emeralds < item.price ? 'Not Enough' : 'Buy'}
+                            </button>
+                        ` : equipped ? `
+                            <button class="equip-btn" disabled>Equipped</button>
+                        ` : `
+                            <button class="equip-btn">Equip</button>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Render Steve preview
+        function renderSteve(preview) {
+            const bodyColor = preview?.body || '#00aaaa';
+            const headColor = preview?.head || '#f4c889';
+            const borderColor = preview?.border || '#008888';
+            
+            return `
+                <div class="character-preview">
+                    <div class="steve-base">
+                        <div class="steve-head" style="background: ${headColor}; border-color: ${borderColor}"></div>
+                        <div class="steve-body" style="background: ${bodyColor}; border-color: ${borderColor}"></div>
+                        <div class="steve-legs" style="background: #3e3e8a; border-color: #2e2e6a"></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Render Steve with hat
+        function renderSteveWithHat(hatIcon) {
+            return `
+                <div class="character-preview">
+                    <div class="steve-base">
+                        <span class="item-hat">${hatIcon}</span>
+                        <div class="steve-head"></div>
+                        <div class="steve-body"></div>
+                        <div class="steve-legs"></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Handle item click
+        function handleItemClick(itemId, category) {
+            const item = shopItems[category].find(i => i.id === itemId);
+            if (!item) return;
+            
+            const owned = playerData.ownedItems.includes(itemId);
+            
+            if (!owned) {
+                // Buy item
+                if (playerData.emeralds >= item.price) {
+                    playerData.emeralds -= item.price;
+                    playerData.ownedItems.push(itemId);
+                    
+                    // Show purchase animation
+                    showPurchaseAnimation(item);
+                    
+                    savePlayerData();
+                    updateUI();
+                    renderItems(category);
+                }
+            } else if (!Object.values(playerData.equippedItems).includes(itemId)) {
+                // Equip item
+                if (category === 'skins') playerData.equippedItems.skin = itemId;
+                else if (category === 'hats') playerData.equippedItems.hat = itemId;
+                else if (category === 'pets') playerData.equippedItems.pet = itemId;
+                else if (category === 'themes') {
+                    playerData.equippedItems.theme = itemId;
+                    applyTheme(itemId);
+                }
+                
+                savePlayerData();
+                renderItems(category);
+            }
+        }
+        
+        // Show purchase animation
+        function showPurchaseAnimation(item) {
+            // Simple alert for now - could be enhanced with a modal
+            if ('vibrate' in navigator) {
+                navigator.vibrate([100, 50, 100]);
+            }
+            
+            // Create floating emerald animation
+            const emerald = document.createElement('div');
+            emerald.innerHTML = '💚';
+            emerald.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                font-size: 3em;
+                z-index: 1000;
+                animation: float-up 1s ease-out forwards;
+            `;
+            document.body.appendChild(emerald);
+            
+            setTimeout(() => emerald.remove(), 1000);
+        }
+        
+        // Apply theme
+        function applyTheme(themeId) {
+            // This would apply CSS changes based on theme
+            document.body.className = themeId || '';
+        }
+        
+        // Tab switching
+        document.querySelectorAll('.shop-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderItems(tab.dataset.category);
+            });
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPlayerData();
+            renderItems('skins');
+            
+            // Apply saved theme
+            if (playerData.equippedItems.theme) {
+                applyTheme(playerData.equippedItems.theme);
+            }
+        });
+        
+        // Add floating animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float-up {
+                0% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(-50%, -200%) scale(1.5);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
