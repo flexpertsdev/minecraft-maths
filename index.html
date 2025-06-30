@@ -175,28 +175,7 @@
         </div>
     </div>
 
-    <!-- Shop Modal -->
-    <div class="modal" id="shopModal">
-        <div class="modal-content shop-modal">
-            <button class="close-modal" onclick="closeShop()">×</button>
-            <h2 class="shop-title">🏪 Emerald Shop</h2>
-            <div class="emerald-balance">
-                <span class="balance-icon">💚</span>
-                <span class="balance-amount" id="shopEmeralds">0</span>
-                <span class="balance-label">Emeralds</span>
-            </div>
-            
-            <div class="shop-categories">
-                <button class="category-btn active" data-category="powerups">Power-ups</button>
-                <button class="category-btn" data-category="themes">Themes</button>
-                <button class="category-btn" data-category="hints">Hint Packs</button>
-            </div>
-            
-            <div class="shop-items" id="shopItems">
-                <!-- Items will be dynamically inserted -->
-            </div>
-        </div>
-    </div>
+    <!-- Shop moved to dedicated page: shop.html -->
 
     <script>
         // Topics data with Minecraft themes
@@ -388,8 +367,7 @@
             // Setup event listeners
             setupEventListeners();
             
-            // Check for achievements
-            checkAchievements();
+            // Don't check achievements on page load - only after completing problems
         });
 
         function loadProgress() {
@@ -528,7 +506,7 @@
                     if (page === 'achievements') {
                         showAchievements();
                     } else if (page === 'shop') {
-                        showShop();
+                        window.location.href = 'shop.html';
                     }
                 });
             });
@@ -541,9 +519,13 @@
             // Check for various achievements
             const totalCompleted = topics.reduce((sum, t) => sum + t.completed, 0);
             
+            // Only show achievement if we're coming back from a topic page with new completions
             if (totalCompleted === 1 && !localStorage.getItem('firstSteps')) {
                 localStorage.setItem('firstSteps', 'true');
-                showAchievement('First Steps', 'Complete your first problem!');
+                // Only show if referred from a topic page
+                if (document.referrer.includes('/topics/')) {
+                    showAchievement('First Steps', 'Complete your first problem!');
+                }
             }
         }
 
@@ -594,7 +576,8 @@
             alert('Achievements page coming soon!');
         }
 
-        // Shop system
+        // Shop system removed - see shop.html for dedicated shop page
+        /*
         const shopItems = {
             powerups: [
                 {
@@ -762,16 +745,9 @@
             
             // Show purchase confirmation
             showAchievement('Purchase Complete!', `You bought ${item.name}!`);
-            
-            // Apply immediate effects
-            if (item.id.includes('theme')) {
-                applyTheme(item.id);
-            }
-        }
+        */
 
-        function closeShop() {
-            document.getElementById('shopModal').classList.remove('show');
-        }
+        */
 
         function applyTheme(themeId) {
             // This would apply CSS theme changes
