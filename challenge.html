@@ -283,8 +283,7 @@
                    class="quick-answer-input" 
                    id="answerInput" 
                    placeholder="Your answer"
-                   autocomplete="off"
-                   inputmode="numeric">
+                   autocomplete="off">
             <button class="submit-answer-btn" onclick="checkAnswer()">Submit</button>
         </div>
         
@@ -332,6 +331,7 @@
             { question: "If x = 5, calculate 2x + 3", answer: "13", topic: "substitution" },
             { question: "If y = 4, find 3y - 5", answer: "7", topic: "substitution" },
             { question: "If a = 6, what is a² - 10", answer: "26", topic: "substitution" },
+            { question: "If b = 7, calculate 5b - 15", answer: "20", topic: "substitution" },
             
             // Basic equations
             { question: "Solve: x + 8 = 15", answer: "7", topic: "equations" },
@@ -341,10 +341,12 @@
             // Word problems
             { question: "5 apples cost 15 emeralds. Cost per apple?", answer: "3", topic: "word" },
             { question: "Steve has 24 blocks, gives away 1/3. How many left?", answer: "16", topic: "word" },
+            { question: "8 cookies shared equally among 4 friends. Each gets?", answer: "2", topic: "word" },
             
-            // Ratios
-            { question: "Simplify ratio 12:18", answer: "2:3", alternates: ["2:3", "2 : 3"], topic: "ratios" },
-            { question: "Simplify ratio 15:25", answer: "3:5", alternates: ["3:5", "3 : 5"], topic: "ratios" },
+            // Ratios - converted to single numbers
+            { question: "Ratio 12:18 simplifies to 2:?", answer: "3", topic: "ratios" },
+            { question: "Ratio 15:? simplifies to 3:5", answer: "25", topic: "ratios" },
+            { question: "In ratio 4:6, if first part is 8, what's the second?", answer: "12", topic: "ratios" },
             
             // Area/shapes
             { question: "Area of rectangle 7×4 blocks", answer: "28", topic: "shapes" },
@@ -359,10 +361,14 @@
             { question: "15 × 4", answer: "60", topic: "arithmetic" },
             { question: "144 ÷ 12", answer: "12", topic: "arithmetic" },
             { question: "7² + 1", answer: "50", topic: "arithmetic" },
+            { question: "5³", answer: "125", topic: "arithmetic" },
+            { question: "√64", answer: "8", topic: "arithmetic" },
             
             // Factorizing
             { question: "Highest common factor of 12 and 18", answer: "6", topic: "factors" },
-            { question: "Factors of 20 (smallest to largest)", answer: "1,2,4,5,10,20", alternates: ["1, 2, 4, 5, 10, 20"], topic: "factors" }
+            { question: "How many factors does 20 have?", answer: "6", topic: "factors" },
+            { question: "Largest factor of 36 (except 36 itself)", answer: "18", topic: "factors" },
+            { question: "Smallest prime factor of 15", answer: "3", topic: "factors" }
         ];
         
         // Get random problems
